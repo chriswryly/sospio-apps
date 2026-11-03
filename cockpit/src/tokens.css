@@ -1,0 +1,48 @@
+.sospio-ck, .sospio-chat {
+  --ink: oklch(0.25 0.012 260);
+  --muted: oklch(0.46 0.012 260);
+  --line: oklch(0.89 0.006 260);
+  --paper: oklch(0.995 0.002 90);
+  --bg: oklch(0.975 0.004 90);
+  --hatch: repeating-linear-gradient(
+    135deg,
+    oklch(0.925 0.004 260) 0 3px,
+    oklch(0.978 0.003 260) 3px 7px
+  );
+  --red: oklch(0.47 0.16 27);
+  --red-tint: oklch(0.965 0.02 27);
+  --red-line: oklch(0.62 0.14 27);
+  --blue: oklch(0.4 0.09 235);
+  --blue-tint: oklch(0.965 0.018 235);
+  --blue-line: oklch(0.7 0.08 235);
+  --syc: oklch(0.48 0.15 292);
+  --syc-tint: oklch(0.962 0.022 292);
+  --syc-line: oklch(0.8 0.07 292);
+  --ovr: oklch(0.5 0.11 58);
+  --ovr-tint: oklch(0.962 0.03 75);
+  --ovr-line: oklch(0.8 0.08 70);
+  --focus: oklch(0.45 0.14 250);
+  --clear: oklch(0.38 0.07 165);
+  --clear-line: oklch(0.78 0.06 165);
+  --ring-track: oklch(0.86 0.02 260);
+  --countdown: oklch(0.955 0.012 260);
+  --countdown-line: oklch(0.55 0.03 260);
+  --soft-line: oklch(0.85 0.006 260);
+  --unknown-line: oklch(0.8 0.006 260);
+  --uncovered-line: oklch(0.7 0.006 260);
+  --user-bubble: oklch(0.94 0.008 260);
+  --body: oklch(0.4 0.012 260);
+  --signal: var(--ink);
+  --signal-tint: var(--bg);
+  --signal-line: var(--line);
+}
+.sospio-ck [data-signal="sycophancy"] {
+  --signal: var(--syc);
+  --signal-tint: var(--syc-tint);
+  --signal-line: var(--syc-line);
+}
+.sospio-ck [data-signal="overreliance"] {
+  --signal: var(--ovr);
+  --signal-tint: var(--ovr-tint);
+  --signal-line: var(--ovr-line);
+}

@@ -1,0 +1,421 @@
+.sospio-chat {
+  --status-none: #596273;
+  --status-green: #236b45;
+  --status-amber: #875600;
+  --status-red: #b02836;
+  --status-grey: #626773;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  font:
+    14px/1.55 "IBM Plex Sans",
+    system-ui,
+    sans-serif;
+  color: var(--ink);
+}
+.sospio-chat * {
+  box-sizing: border-box;
+}
+.sospio-chat :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.sospio-chat header {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px 24px;
+  padding: 16px 24px 10px;
+  border-bottom: 1px solid oklch(0.91 0.005 260);
+}
+.sospio-chat-heading { min-width: 0; }
+.sospio-chat-heading > strong {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 15px;
+  font-weight: 600;
+}
+.sospio-chat-status { display: flex; align-items: center; gap: 12px; margin-top: 2px; }
+.sospio-chat-utilities {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+.sospio-chat-help { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.sospio-chat-session summary { cursor: pointer; padding: 4px 0; }
+.sospio-chat-session-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 24px;
+  z-index: 9;
+  width: min(360px, calc(100vw - 48px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 18px #0002;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.sospio-chat-session-panel p { margin: 0 0 10px; }
+.sospio-chat-session-panel > :last-child { margin-bottom: 0; }
+.sospio-chat small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.sospio-chat-model {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+.sospio-chat button {
+  font:
+    500 13px "IBM Plex Sans",
+    sans-serif;
+  min-height: 32px;
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid oklch(0.85 0.006 260);
+  background: var(--paper);
+  color: inherit;
+  cursor: pointer;
+}
+.sospio-chat-scenarios {
+  font: 500 13px "IBM Plex Sans", sans-serif;
+  color: inherit;
+  text-underline-offset: 3px;
+}
+.sospio-chat button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.sospio-chat-log {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.sospio-chat-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.sospio-chat-message {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow-wrap: anywhere;
+}
+.sospio-chat-message > div {
+  white-space: pre-wrap;
+}
+.sospio-chat-user {
+  align-items: flex-end;
+}
+.sospio-chat-user > div {
+  max-width: 78%;
+  padding: 9px 14px;
+  border-radius: 14px 14px 4px 14px;
+  background: var(--user-bubble);
+}
+.sospio-chat-error {
+  color: var(--red);
+}
+.sospio-chat-notice {
+  border-radius: 10px;
+  background: var(--syc-tint);
+  border: 1px solid oklch(0.8 0.07 292);
+  padding: 9px 12px;
+}
+.sospio-chat-notice summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sospio-chat-notice summary span {
+  font-weight: 400;
+}
+.sospio-chat-notice p,
+.sospio-chat-divider p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+}
+.sospio-chat-notice button + button {
+  margin-left: 6px;
+}
+.sospio-chat-divider {
+  border-top: 1px solid oklch(0.8 0.07 292);
+  text-align: center;
+  padding-top: 6px;
+  font-size: 12px;
+}
+.sospio-chat-divider > strong {
+  border-radius: 999px;
+  background: var(--syc-tint);
+  padding: 3px 10px;
+}
+.sospio-chat-divider details {
+  max-width: 520px;
+  margin: auto;
+  font-size: 12.5px;
+}
+.sospio-chat footer {
+  border-top: 1px solid oklch(0.91 0.005 260);
+  padding: 14px 20px 18px;
+}
+.sospio-chat footer > form,
+.sospio-chat-close {
+  max-width: 720px;
+  margin: auto;
+  border: 1px solid oklch(0.85 0.006 260);
+  border-radius: 12px;
+  padding: 8px 8px 8px 14px;
+}
+.sospio-chat form {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.sospio-chat textarea {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  resize: none;
+  font: inherit;
+  background: transparent;
+  color: inherit;
+  padding: 6px 0;
+}
+.sospio-chat form button {
+  background: var(--ink);
+  color: white;
+  min-height: 36px;
+}
+.sospio-chat footer > p {
+  text-align: center;
+  font-size: 12px;
+}
+.sospio-chat-start {
+  margin: 48px auto 0;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.sospio-chat-start h2,
+.sospio-chat-start p {
+  margin: 0;
+}
+.sospio-chat-start h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+.sospio-chat-start p {
+  font-size: 13.5px;
+  color: var(--body);
+}
+.sospio-chat-start fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sospio-chat-start legend {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.sospio-chat-start label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid oklch(0.89 0.006 260);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.sospio-chat-start label span {
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+.sospio-chat-start label.sospio-chat-chosen {
+  border: 1.5px solid var(--ink);
+  background: var(--bg);
+}
+
+.sospio-chat header, .sospio-chat footer {flex-shrink:0}
+/* Assistant replies formatted from markdown (Markdown.tsx). */
+.sospio-chat-message > .sospio-md {
+  white-space: normal;
+  line-height: 1.5;
+}
+.sospio-md > :first-child { margin-top: 0; }
+.sospio-md > :last-child { margin-bottom: 0; }
+.sospio-md p, .sospio-md ul, .sospio-md ol, .sospio-md blockquote, .sospio-md pre, .sospio-md .sospio-md-table {
+  margin: 0 0 10px;
+}
+.sospio-md ul, .sospio-md ol { padding-left: 22px; }
+.sospio-md li + li { margin-top: 3px; }
+.sospio-md h3, .sospio-md h4, .sospio-md h5, .sospio-md h6 { margin: 14px 0 6px; font-size: 1em; font-weight: 600; }
+.sospio-md h3 { font-size: 1.1em; }
+.sospio-md code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.9em;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(127, 127, 127, 0.15);
+}
+.sospio-md pre {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(127, 127, 127, 0.12);
+  overflow-x: auto;
+  white-space: pre;
+}
+.sospio-md pre code { padding: 0; background: none; }
+.sospio-md blockquote { padding-left: 12px; border-left: 3px solid rgba(127, 127, 127, 0.4); opacity: 0.9; }
+.sospio-md hr { border: 0; border-top: 1px solid rgba(127, 127, 127, 0.3); margin: 12px 0; }
+.sospio-md-table { overflow-x: auto; }
+.sospio-md table { border-collapse: collapse; font-size: 0.95em; }
+.sospio-md th, .sospio-md td { padding: 4px 10px; border: 1px solid rgba(127, 127, 127, 0.3); text-align: left; vertical-align: top; }
+
+.problem-report { max-width: 36rem; width: calc(100% - 3rem); max-height: 85vh; overflow: auto; border: 1px solid #64748b; border-radius: 12px; padding: 24px; color: #18212d; background: #fff; }
+.problem-report::backdrop { background: rgba(0, 0, 0, .5); }
+.problem-report fieldset { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+.problem-report label { display: block; margin: 12px 0; }
+.problem-report select, .problem-report textarea { display: block; width: 100%; box-sizing: border-box; margin-top: 8px; font: inherit; }
+.problem-report textarea { min-height: 100px; }
+.problem-report .problem-report-category { display: flex; align-items: baseline; gap: 8px; }
+.problem-report-actions { display: flex; justify-content: flex-end; gap: 12px; }
+.problem-report button { padding: 8px 14px; font: inherit; }
+.problem-report [role="status"] span { user-select: text; font-family: monospace; }
+
+/* The chat deliberately uses a light paper surface in both system schemes. */
+.sospio-status-light {
+  position: relative;
+  --status-color: var(--status-none);
+}
+.sospio-status-light[data-level="green"] { --status-color: var(--status-green); }
+.sospio-status-light[data-level="amber"] { --status-color: var(--status-amber); }
+.sospio-status-light[data-level="red"] { --status-color: var(--status-red); }
+.sospio-status-light[data-level="grey"] { --status-color: var(--status-grey); }
+.sospio-status-light > button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 3px 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.sospio-status-light > button:hover,
+.sospio-status-light > button[aria-expanded="true"] { color: var(--ink); }
+.sospio-status-light > button:hover > [aria-live] { text-decoration: underline; text-underline-offset: 3px; }
+.sospio-chat-help > button,
+.sospio-chat-help > a {
+  display: inline-flex;
+  align-items: center;
+  line-height: 20px;
+  min-height: 28px;
+  padding: 4px 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  text-decoration: none;
+}
+.sospio-chat-help > button:hover,
+.sospio-chat-help > a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.sospio-status-glyph {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border-radius: 50%;
+  background: var(--status-color);
+  color: white;
+  font: 700 11px/1 system-ui, sans-serif;
+}
+.sospio-status-light[data-level="none"] .sospio-status-glyph {
+  background: transparent;
+  color: var(--status-color);
+  font-size: 18px;
+}
+.sospio-status-glyph.is-checking::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 1px solid var(--status-color);
+  border-radius: 50%;
+  opacity: 0.45;
+}
+.sospio-status-popover {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 10;
+  width: min(320px, calc(100vw - 40px));
+  max-height: min(420px, 65vh);
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--muted);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 4px 18px #0002;
+  font-size: 13px;
+}
+.sospio-status-popover p { margin: 0 0 10px; }
+.sospio-status-popover p:last-child { margin-bottom: 0; }
+.sospio-status-popover ul { margin: 0 0 10px; padding-left: 18px; }
+
+/* Keep the panel on screen when the compact header wraps its controls. */
+@media (max-width: 960px) {
+  .sospio-chat header { position: relative; }
+  .sospio-status-popover { max-width: calc(100vw - 48px); }
+}
+
+.sospio-chat-repeat summary {
+  display: block;
+  font-weight: 400;
+}
+.sospio-chat-repeat summary span { display: inline; }
+.sospio-chat-repeat:not([open]) { padding-block: 8px; }

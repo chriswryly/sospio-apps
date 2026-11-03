@@ -1,0 +1,741 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #101315;
+  color: #eef4f8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 360px;
+  background: #101315;
+}
+
+.operator button,
+.operator select {
+  font: inherit;
+}
+
+.operator .panel {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(180px, 1fr) minmax(260px, 35vh) auto;
+  border-left: 1px solid #2d3438;
+}
+
+.panel-error {
+  display: block;
+  padding: 24px;
+  line-height: 1.5;
+}
+
+.panel-error h1 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.operator .status {
+  border-bottom: 1px solid #2d3438;
+  background: #141819;
+}
+
+.operator .run-header {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.7fr) minmax(210px, 1.3fr);
+  gap: 10px 14px;
+  padding: 12px 14px;
+}
+
+.operator .run-title {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 8px;
+  min-width: 0;
+}
+
+.operator .run-title strong,
+.operator .run-title span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.operator .health {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 5px;
+  background: #c84f4f;
+  grid-row: span 2;
+}
+
+.operator .health.healthy {
+  background: #3fb178;
+}
+
+.operator .health.starting {
+  background: #d8a93f;
+}
+
+.operator .health.error {
+  background: #d75d59;
+}
+
+.operator .muted {
+  color: #8f9aa5;
+}
+
+.operator .actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.operator .actions button,
+.operator .diagnostic-toggle,
+.operator .inline-action {
+  min-height: 32px;
+  border: 1px solid #3a444a;
+  border-radius: 8px;
+  background: #1b2225;
+  color: #eef4f8;
+  padding: 7px 9px;
+  cursor: pointer;
+}
+
+.operator .actions button:hover,
+.operator .diagnostic-toggle:hover:not(:disabled),
+.operator .inline-action:hover {
+  border-color: #81b29a;
+}
+
+.operator .actions button:disabled,
+.operator .diagnostic-toggle:disabled {
+  color: #647180;
+  cursor: not-allowed;
+  border-color: #2d3438;
+}
+
+.operator .run-metadata {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 7px;
+}
+
+.operator .monitor-error {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 7px 9px;
+  border: 1px solid #7d4a3c;
+  border-radius: 8px;
+  background: #1d1614;
+  min-width: 0;
+}
+
+.operator .monitor-error span:first-child {
+  color: #9aa7ae;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.operator .monitor-error span:last-child {
+  color: #e0b3a4;
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.operator .meta-pill,
+.operator .metric,
+.operator .preset-control {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #2f383d;
+  border-radius: 8px;
+  background: #111719;
+}
+
+.operator .meta-pill span,
+.operator .metric span,
+.operator .preset-control span {
+  color: #8f9aa5;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.operator .meta-pill strong,
+.operator .metric strong {
+  min-width: 0;
+  color: #eef4f8;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.operator .preset-control select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #3a444a;
+  border-radius: 7px;
+  background: #1b2225;
+  color: #8f9aa5;
+  padding: 6px 7px;
+}
+
+.operator .inline-action {
+  width: 100%;
+}
+
+.toast {
+  margin: 10px 14px 0;
+  padding: 10px 12px;
+  border: 1px solid #66433f;
+  border-radius: 8px;
+  background: #2a1717;
+  color: #ffcfca;
+}
+
+.operator .validation-loop,
+.operator .intervention-event,
+.operator .developer-controls {
+  padding: 12px 14px;
+  border-bottom: 1px solid #2d3438;
+}
+
+.operator .validation-loop {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(86px, 0.42fr) minmax(0, 1fr);
+  gap: 10px;
+  background: #101315;
+}
+
+.operator .empty-loop {
+  display: block;
+}
+
+.operator .empty-loop h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.operator .signal-lane {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #333d42;
+  border-radius: 8px;
+  background: #151b1d;
+}
+
+.operator .signal-lane.ai_system {
+  border-color: #3e5967;
+}
+
+.operator .signal-lane.user {
+  border-color: #4e5535;
+}
+
+.operator .signal-lane h2 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.operator .signal-lane > div:first-child span,
+.operator .signal-lane p {
+  color: #9aa7ae;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.operator .signal-lane p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.operator .pressure {
+  min-height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid #3a444a;
+  background: #111719;
+}
+
+.operator .pressure strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.operator .pressure span {
+  color: #9aa7ae;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.operator .pressure-unavailable strong {
+  font-size: 13px;
+  color: #9aa7ae;
+}
+
+.operator .pressure-quiet {
+  border-color: #3d4f4d;
+}
+
+.operator .pressure-watch {
+  border-color: #75633b;
+}
+
+.operator .pressure-active {
+  border-color: #9f7448;
+}
+
+.operator .pressure-high {
+  border-color: #a85151;
+}
+
+.operator .signal-lane dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 0;
+}
+
+.operator .signal-lane dl div {
+  min-width: 0;
+}
+
+.operator dt {
+  color: #8f9aa5;
+  font-size: 11px;
+}
+
+.operator dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.operator .coupling {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px 8px;
+  border: 1px solid #3a444a;
+  border-radius: 8px;
+  background: #161719;
+  text-align: center;
+}
+
+.operator .coupling span,
+.operator .coupling small {
+  color: #9aa7ae;
+  font-size: 11px;
+}
+
+/* The monitor's verbatim message. Clamped rather than truncated with an ellipsis in markup, so
+   the full text stays selectable and is on the title attribute; a provider HTTP body has no
+   length bound and this lane is the narrowest column on the screen. */
+.operator .coupling-reason {
+  display: -webkit-box;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  color: #c88c7a !important;
+  line-height: 1.35;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.operator .coupling strong {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.operator .coupling-fired {
+  border-color: #c06f4b;
+}
+
+.operator .coupling-watching {
+  border-color: #b49c54;
+}
+
+.operator .coupling-inactive {
+  border-color: #4f6b56;
+}
+
+.operator .coupling-unavailable {
+  border-color: #555f65;
+}
+
+.operator .coupling-selected_not_executed {
+  border-color: #9d7f38;
+}
+
+.operator .intervention-event {
+  display: grid;
+  gap: 10px;
+  background: #121719;
+}
+
+.operator .event-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+  gap: 7px;
+}
+
+/* One line of provenance, not five cards: same facts, a fifth of the space. */
+.operator .receipt-caption,
+.operator .provenance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 10px;
+  margin: 0;
+  min-width: 0;
+}
+
+.operator .receipt-caption span,
+.operator .provenance span {
+  color: #c3ccd2;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.operator .receipt-caption span + span::before,
+.operator .provenance span + span::before {
+  content: "·";
+  margin-right: 10px;
+  color: #6b767e;
+}
+
+.operator .receipt-caption small,
+.operator .provenance small,
+.operator .audit-absent {
+  flex-basis: 100%;
+  color: #8f9aa5;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.operator .audit-absent {
+  margin: 0;
+}
+
+.operator .run-configuration,
+.operator .run-configuration > summary {
+  grid-column: 1 / -1;
+}
+
+.operator .run-configuration > summary {
+  color: #9aa7ae;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.operator .run-config {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 7px;
+  padding-top: 8px;
+}
+
+.operator .receipt-blocks,
+.operator .receipt-block,
+.operator .detached-receipts {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Only the repeated receipt item is a card. The detached group is a labelled region: giving
+   it the same frame would nest a card inside a card. */
+.operator .receipt-block {
+  padding: 8px;
+  border: 1px solid #2d3438;
+  border-radius: 8px;
+  background: #111719;
+}
+
+.operator .detached-receipts h3 {
+  margin: 0;
+  font-size: 13px;
+  color: #c8a45c;
+}
+
+.operator .mechanism-list {
+  display: grid;
+  gap: 6px;
+}
+
+.operator .mechanism-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto auto;
+  gap: 6px 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #333d42;
+  border-radius: 8px;
+  background: #151b1d;
+}
+
+.operator .mechanism-row strong {
+  overflow-wrap: anywhere;
+}
+
+.operator .mechanism-row span {
+  color: #d9d0a1;
+  font-size: 12px;
+}
+
+.operator .mechanism-row small {
+  grid-column: 1 / -1;
+  color: #a8b2b8;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.operator .status-failed {
+  border-color: #8c514d;
+}
+
+.operator .status-capability_capped {
+  border-color: #9d7f38;
+}
+
+/* Not a failure: policy selected it and the run's allowlist excluded it. */
+.operator .status-not_permitted {
+  border-color: #6f7f9d;
+}
+
+.operator .status-armed,
+.operator .status-applied {
+  border-color: #5d7a5f;
+}
+
+.operator .status-superseded,
+.operator .status-pre_delivery_only {
+  border-color: #7b6a44;
+}
+
+.operator .manual-interventions {
+  display: grid;
+  gap: 8px;
+}
+
+.operator .manual-interventions strong {
+  color: #ffe1a8;
+}
+
+.operator .turns {
+  overflow: auto;
+  padding: 12px 12px 4px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.operator .empty {
+  color: #8f9aa5;
+  padding: 10px 2px;
+  line-height: 1.45;
+}
+
+.operator .turn {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #2d3438;
+  border-radius: 8px;
+  background: #14191b;
+  color: #eef4f8;
+  padding: 11px;
+  cursor: pointer;
+}
+
+.operator .turn.selected {
+  border-color: #81b29a;
+  background: #17201d;
+}
+
+.operator .turn strong,
+.operator .excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+}
+
+.operator .turn-meta {
+  color: #8f9aa5;
+  font-size: 12px;
+}
+
+.operator .excerpt {
+  color: #bcc7d0;
+  font-size: 14px;
+}
+
+.operator .signals {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-height: 24px;
+}
+
+.operator .signal,
+.operator .receipt-badge {
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-size: 12px;
+  border: 1px solid #3a444a;
+  background: #1b2225;
+  color: #d5e1e8;
+}
+
+.operator .receipt-badge.summary-applied,
+.operator .receipt-badge.summary-armed_next_turn {
+  border-color: #5d7a5f;
+  color: #bbe4c7;
+}
+
+.operator .receipt-badge.summary-failed {
+  border-color: #8c514d;
+  color: #ffc4bf;
+}
+
+.operator .inspector {
+  border-top: 1px solid #2d3438;
+  background: #0e1112;
+  overflow: auto;
+  padding: 14px;
+}
+
+.operator .inspector h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.operator .inspector-group,
+.operator .raw-json {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #2d3438;
+  border-radius: 8px;
+  background: #131719;
+}
+
+.operator .inspector-group h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.operator .inspector p,
+.operator .inspector-group p {
+  margin: 0;
+  color: #c7d1db;
+  line-height: 1.35;
+}
+
+.operator .raw-json summary,
+.operator .developer-controls summary {
+  cursor: pointer;
+  color: #d5e1e8;
+}
+
+.operator .developer-controls {
+  background: #111719;
+}
+
+.operator .probe-controls {
+  padding: 10px 0 0;
+}
+
+.operator .diagnostics {
+  padding: 10px 0 0;
+}
+
+.operator .diagnostic-toggle {
+  width: 100%;
+  text-align: left;
+  color: #bfd0dc;
+}
+
+.operator .diagnostic-toggle:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.operator .diagnostic-list {
+  margin-top: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.operator .diagnostic-row {
+  display: grid;
+  grid-template-columns: 80px 70px 92px 1fr;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #151b1d;
+  color: #c9d4dd;
+  font-size: 12px;
+}
+
+.operator pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #c8d2dc;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+@media (max-width: 430px) {
+  .operator .run-header,
+  .operator .validation-loop,
+  .operator .event-summary,
+  .operator .mechanism-row {
+    grid-template-columns: 1fr;
+  }
+
+  .operator .actions {
+    justify-content: flex-start;
+  }
+}
+
+/* Shared cockpit occupies the existing side column; operator tools stay accessible. */
+.cockpit-column {width:430px;min-width:0;height:100vh;display:flex;flex-direction:column;overflow:auto;color:oklch(.25 .012 260);background:oklch(.995 .002 90)}
+.cockpit-column>.sospio-ck {flex:1;min-height:450px}
+.operator {flex-shrink:0;border-top:1px solid oklch(.89 .006 260);padding:8px 14px}
+.operator>summary {cursor:pointer;font:13px 'IBM Plex Sans',sans-serif}
+.operator .panel {width:100%;height:auto;overflow:visible}
+.cockpit-column {width:100%;max-width:none}
+
+.operator .panel {color:#eef4f8;background:#101418;min-height:0}
+.sospio-ck,.sospio-chat {color-scheme:light}
+
+/* The viewport owns no scroll; only its two content regions do. */
+html, body, #root {height:100%;overflow:hidden}
+.cockpit-column {height:100%;min-height:0;overflow:hidden}
+.cockpit-column>.sospio-ck {flex:1;min-height:0}
+.operator {max-height:45%;overflow:auto}
+.operator>summary {color:oklch(.25 .012 260)}

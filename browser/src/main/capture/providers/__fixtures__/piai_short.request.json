@@ -1,0 +1,9 @@
+{
+  "conversation_id": "pi-fixture-short",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Please answer in one sentence."
+    }
+  ]
+}

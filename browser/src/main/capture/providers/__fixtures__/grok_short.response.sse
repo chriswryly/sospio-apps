@@ -1,0 +1,8 @@
+data: {"type":"token","result":{"response":{"token":"Here is a concise "}},"conversationId":"grok-fixture-short"}
+
+data: {"type":"token","result":{"response":{"token":"one-sentence answer."}},"conversationId":"grok-fixture-short"}
+
+data: {"type":"final","message":{"role":"assistant","content":"Here is a concise one-sentence answer."},"conversationId":"grok-fixture-short"}
+
+data: [DONE]
+

@@ -1,0 +1,161 @@
+/* First-run token screen, shared by both apps. Scoped to .sospio-setup so it never styles the chat or cockpit. */
+.sospio-setup {
+  --ink: oklch(0.25 0.012 260);
+  --body: oklch(0.4 0.012 260);
+  --muted: oklch(0.5 0.012 260);
+  --line: oklch(0.86 0.006 260);
+  --paper: oklch(0.995 0.002 90);
+  --bg: oklch(0.965 0.004 90);
+  --accent: oklch(0.38 0.07 165);
+  --accent-hover: oklch(0.32 0.07 165);
+  --focus: oklch(0.45 0.14 250);
+  --error: oklch(0.47 0.16 27);
+  --error-tint: oklch(0.965 0.02 27);
+  color-scheme: light;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: var(--bg);
+  color: var(--body);
+  font-family: "IBM Plex Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+@media (prefers-color-scheme: dark) {
+  .sospio-setup {
+    --ink: oklch(0.95 0.006 260);
+    --body: oklch(0.82 0.008 260);
+    --muted: oklch(0.68 0.01 260);
+    --line: oklch(0.36 0.01 260);
+    --paper: oklch(0.22 0.008 260);
+    --bg: oklch(0.17 0.006 260);
+    --accent: oklch(0.72 0.09 165);
+    --accent-hover: oklch(0.78 0.09 165);
+    --focus: oklch(0.72 0.12 250);
+    --error: oklch(0.75 0.13 27);
+    --error-tint: oklch(0.3 0.06 27);
+    color-scheme: dark;
+  }
+}
+.sospio-setup * { box-sizing: border-box; }
+.sospio-setup .setup-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px 24px 22px;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.05), 0 8px 24px oklch(0 0 0 / 0.06);
+}
+.sospio-setup .setup-mark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+.sospio-setup .setup-mark::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 22%, transparent);
+}
+.sospio-setup h1 {
+  margin: 0 0 6px;
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.sospio-setup .setup-lead {
+  margin: 0 0 20px;
+  color: var(--body);
+}
+.sospio-setup form {
+  display: grid;
+  gap: 14px;
+}
+.sospio-setup .setup-field {
+  display: grid;
+  gap: 6px;
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 13px;
+}
+.sospio-setup input {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 400;
+}
+.sospio-setup input[type="password"] {
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+}
+.sospio-setup input::placeholder {
+  color: var(--muted);
+  font-family: "IBM Plex Sans", Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  letter-spacing: 0;
+}
+.sospio-setup input:focus-visible,
+.sospio-setup button:focus-visible,
+.sospio-setup summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.sospio-setup .setup-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+.sospio-setup details {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.sospio-setup summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12.5px;
+  width: fit-content;
+}
+.sospio-setup details[open] summary { margin-bottom: 10px; }
+.sospio-setup .setup-submit {
+  min-height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--paper);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sospio-setup .setup-submit:hover:not(:disabled) { background: var(--accent-hover); }
+.sospio-setup .setup-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+.sospio-setup .setup-error {
+  margin: 4px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--error-tint);
+  color: var(--error);
+  font-size: 13px;
+}
+.sospio-setup .setup-foot {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}

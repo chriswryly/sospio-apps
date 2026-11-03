@@ -1,0 +1,10 @@
+{
+  "conversationId": "grok-fixture-short",
+  "modelName": "grok",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Please answer in one sentence."
+    }
+  ]
+}

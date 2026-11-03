@@ -1,0 +1,529 @@
+.sospio-ck {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  font:
+    13px/1.45 "IBM Plex Sans",
+    system-ui,
+    sans-serif;
+  color: var(--ink);
+  box-sizing: border-box;
+  text-align: left;
+}
+.sospio-ck * {
+  box-sizing: border-box;
+}
+.sospio-ck :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.sospio-ck p,
+.sospio-ck h2,
+.sospio-ck h3 {
+  margin: 0;
+}
+.sospio-ck strong {
+  font-weight: 600;
+}
+.sospio-ck small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.sospio-ck-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  flex-shrink: 0;
+}
+.sospio-ck-app {
+  font-size: 11px;
+  padding: 1px 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: 999px;
+  color: var(--muted);
+}
+.sospio-ck-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--muted);
+}
+.sospio-ck-model {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  font-size: 12px;
+}
+.sospio-ck-model > span {
+  color: var(--muted);
+}
+.sospio-ck-model small {
+  margin-left: auto;
+}
+.sospio-ck-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 14px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sospio-ck-scroll > section {
+  flex-shrink: 0;
+}
+.sospio-ck-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sospio-ck-health {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sospio-ck-health h2 {
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+.sospio-ck-health .sospio-ck-row {
+  align-items: baseline;
+}
+.sospio-ck-health .sospio-ck-row > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.sospio-ck-health p {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.sospio-ck-latest {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.sospio-ck-latest > span:first-child {
+  color: var(--muted);
+}
+.sospio-ck-latest strong {
+  font-weight: 500;
+}
+.sospio-ck-signals {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+}
+.sospio-ck-signal {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sospio-ck-signal + .sospio-ck-signal {
+  border-top: 1px solid var(--line);
+}
+.sospio-ck-glyph {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  background: var(--signal);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.sospio-ck-signal-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.25;
+}
+.sospio-ck-ladder {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+}
+.sospio-ck-ladder li {
+  padding: 3px 6px 4px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  line-height: 1.25;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+.sospio-ck-ladder .sospio-ck-current {
+  background: var(--signal);
+  color: white;
+  border-color: var(--signal);
+  font-weight: 600;
+}
+.sospio-ck-ladder .sospio-ck-reached {
+  background: var(--signal-tint);
+  color: var(--signal);
+  border-color: var(--signal-line);
+}
+.sospio-ck-signal p {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.sospio-ck-reading {
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+.sospio-ck-clear {
+  color: var(--clear);
+  border-color: var(--clear-line);
+}
+.sospio-ck-flagged {
+  background: var(--signal);
+  color: white;
+  border-color: var(--signal);
+}
+.sospio-ck-uncertain {
+  color: var(--signal);
+  background: var(--signal-tint);
+  border: 1px dashed var(--signal);
+}
+.sospio-ck-unavailable,
+.sospio-ck-monitoring_unavailable,
+.sospio-ck-not_covered,
+.sospio-ck-hatched {
+  background: var(--hatch);
+}
+.sospio-ck-unavailable {
+  border-color: var(--unknown-line);
+}
+.sospio-ck-monitoring_unavailable {
+  border-color: var(--muted);
+}
+.sospio-ck-not_covered {
+  border: 1px dashed var(--uncovered-line);
+}
+.sospio-ck-pending,
+.sospio-ck-starting {
+  color: var(--muted);
+  border: 1px dotted var(--muted);
+}
+.sospio-ck-no_turns {
+  color: var(--muted);
+}
+.sospio-ck-outcome {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: 4px;
+  border-width: 1px;
+  border-color: currentColor;
+}
+.sospio-ck-outcome.sospio-ck-failed {
+  border-color: var(--red-line);
+}
+.sospio-ck-outcome.sospio-ck-capped {
+  border-color: var(--blue-line);
+}
+.sospio-ck-outcome.sospio-ck-shown {
+  border-color: var(--line);
+}
+.sospio-ck-banner {
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+.sospio-ck-banner-main {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.sospio-ck-banner-main > div:last-child {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sospio-ck-banner strong {
+  font-size: 14px;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+.sospio-ck-banner p {
+  font-size: 12.5px;
+  white-space: pre-wrap;
+}
+.sospio-ck-banner small {
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: inherit;
+}
+.sospio-ck-banner-countdown {
+  background: var(--countdown);
+  border-color: var(--countdown-line);
+}
+.sospio-ck-banner-uncertainty,
+.sospio-ck-banner-checkin {
+  background: var(--signal-tint);
+  border: 1px dashed var(--signal);
+}
+.sospio-ck-banner-monitoring_unavailable {
+  background: var(--hatch);
+  border-color: var(--muted);
+}
+.sospio-ck-banner-failed_close {
+  background: var(--red-tint);
+  border-color: var(--red-line);
+}
+.sospio-ck-ring {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+}
+.sospio-ck-ring span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+.sospio-ck-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.sospio-ck button {
+  font:
+    500 12px "IBM Plex Sans",
+    sans-serif;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 32px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+.sospio-ck button.sospio-ck-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+/* A disclosure card, not the full-height cockpit beside it. */
+details.sospio-ck.records-panel {
+  display: block;
+  flex: none;
+  height: auto;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 12px;
+  font-size: 13px;
+  color: var(--body);
+}
+.records-panel > summary {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.records-panel > p,
+.records-panel > .sospio-ck-buttons,
+.records-panel > details {
+  margin-top: 8px;
+}
+.records-panel > details > summary {
+  color: var(--muted);
+  cursor: pointer;
+}
+.records-panel > details > p {
+  margin-top: 6px;
+}
+.records-panel .sospio-ck-buttons > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.records-panel .sospio-ck-buttons > div > p {
+  flex-basis: 100%;
+}
+.sospio-ck.records-panel button.records-destructive {
+  color: var(--red);
+  border-color: var(--red-line);
+}
+.records-panel > [role="status"]:empty {
+  margin: 0;
+}
+.sospio-ck-turns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sospio-ck-turns > .sospio-ck-row {
+  justify-content: space-between;
+  align-items: baseline;
+}
+.sospio-ck h3 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sospio-ck-empty {
+  border: 1px dashed var(--soft-line);
+  border-radius: 8px;
+  padding: 20px 14px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.sospio-ck-turn {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+.sospio-ck-turn[aria-current="true"] {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.sospio-ck-turn-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px 0;
+  flex-wrap: wrap;
+}
+.sospio-ck-turn-head > div {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.sospio-ck-turn-head .sospio-ck-reading {
+  font-size: 10.5px;
+  padding: 1px 6px;
+}
+.sospio-ck-transcript {
+  padding: 6px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+.sospio-ck-transcript span {
+  color: var(--muted);
+}
+.sospio-ck-note,
+.sospio-ck-evidence,
+.sospio-ck-receipt {
+  border-top: 1px solid var(--line);
+  padding: 9px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--body);
+}
+.sospio-ck-evidence > strong {
+  font-size: 11.5px;
+  color: var(--signal);
+}
+.sospio-ck blockquote {
+  margin: 0;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: var(--signal-tint);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.sospio-ck-receipt .sospio-ck-row {
+  gap: 6px;
+  color: var(--ink);
+}
+.sospio-ck-receipt .sospio-ck-row > strong {
+  font-size: 12.5px;
+  flex: 1;
+  min-width: 150px;
+}
+.sospio-ck-tier {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: white;
+  background: var(--signal);
+}
+.sospio-ck summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+}
+.sospio-ck-exact,
+.sospio-ck pre {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.sospio-ck pre {
+  font:
+    10.5px/1.5 "IBM Plex Mono",
+    monospace;
+}
+.sospio-ck p {
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+.sospio-ck-signal-name {line-height:1.45}
+.sospio-ck-signal-name>strong {line-height:1.25}
+.sospio-ck-latest .sospio-ck-outcome {padding:0 6px}
+.sospio-ck-exact {text-wrap:pretty}
+.sospio-ck-receipt>details:last-child>summary {font-weight:400;color:var(--muted)}
+.sospio-ck-note {padding:9px 12px;background:var(--bg)}
+.sospio-ck-note.sospio-ck-hatched {background:var(--hatch)}
+
+.sospio-ck [data-signal="emotional_dependence"] {
+  --signal: var(--blue);
+  --signal-tint: var(--blue-tint);
+  --signal-line: var(--blue-line);
+}

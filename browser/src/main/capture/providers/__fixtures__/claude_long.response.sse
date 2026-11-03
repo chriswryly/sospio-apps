@@ -1,0 +1,9 @@
+event: completion
+data: {"type":"completion","completion":"Calibration means matching confidence to evidence.\n\n"}
+
+event: completion
+data: {"type":"completion","completion":"It matters because overconfident systems can sound useful while hiding uncertainty."}
+
+event: message_stop
+data: {}
+

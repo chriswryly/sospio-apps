@@ -1,0 +1,536 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #101418;
+  color: #eef4f8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 920px;
+  background: #101418;
+}
+
+.operator button,
+.operator textarea {
+  font: inherit;
+}
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(520px, 1fr) 440px;
+  background: #101418;
+}
+
+.operator .chat {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  border-right: 1px solid #26313b;
+}
+
+.operator .chat-header,
+.operator .status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #26313b;
+  background: #141a20;
+}
+
+.operator .chat-header h1 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.operator .chat-header p {
+  margin: 0;
+  color: #8f9aa5;
+  font-size: 13px;
+}
+
+.operator .chat-actions,
+.operator .actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.operator .chat-actions button,
+.operator .actions button,
+.operator .composer button {
+  border: 1px solid #344350;
+  border-radius: 8px;
+  background: #1d252d;
+  color: #eef4f8;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.operator .chat-actions button:hover,
+.operator .actions button:hover,
+.operator .composer button:hover:not(:disabled) {
+  border-color: #78a8d9;
+}
+
+.operator .chat-actions button:disabled,
+.operator .actions button:disabled,
+.operator .composer button:disabled {
+  color: #647180;
+  cursor: not-allowed;
+  border-color: #26323d;
+}
+
+.operator .setup,
+.toast {
+  margin: 10px 14px 0;
+  padding: 10px 12px;
+  border: 1px solid #514321;
+  border-radius: 8px;
+  background: #241d0d;
+  color: #f5d78e;
+}
+
+.toast {
+  position: fixed;
+  right: 456px;
+  top: 12px;
+  z-index: 10;
+}
+
+.operator .messages {
+  min-height: 0;
+  overflow: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.operator .empty-chat,
+.operator .empty {
+  color: #8f9aa5;
+  border: 1px dashed #2c3742;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.operator .empty-chat {
+  display: grid;
+  gap: 8px;
+}
+
+.operator .empty-chat strong {
+  color: #d6dde5;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.operator .empty-chat span {
+  font-size: 13px;
+}
+
+.operator .message {
+  width: min(760px, 92%);
+  border: 1px solid #2b3742;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #151d24;
+}
+
+.operator .message.user {
+  align-self: flex-end;
+  background: #1c2833;
+}
+
+.operator .message span {
+  display: block;
+  margin-bottom: 5px;
+  color: #8f9aa5;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.operator .message p {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.operator .composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid #26313b;
+  background: #141a20;
+}
+
+.operator .composer textarea {
+  resize: none;
+  min-height: 58px;
+  max-height: 160px;
+  border: 1px solid #344350;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #eef4f8;
+  background: #101820;
+}
+
+/* Column layout rather than positional grid rows. The old
+   `grid-template-rows` assigned sizes by child position, so any conditional
+   section — the fallback banner, and now the ladder line and the termination
+   banner — shifted every later child into the wrong row and stretched the
+   diagnostics chips into the turn list's 210px. Sizing lives on the two
+   scrollable regions instead, so the panel tolerates any number of sections. */
+.operator .panel {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.operator .panel > * {
+  flex: 0 0 auto;
+}
+
+.operator .status > div:first-child {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 8px;
+  min-width: 0;
+}
+
+.operator .health {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 5px;
+  background: #c84f4f;
+  grid-row: span 2;
+}
+
+.operator .health.healthy {
+  background: #3fb178;
+}
+
+.operator .health.starting,
+.operator .health.bypassed {
+  background: #d8a93f;
+}
+
+.operator .health.fallback {
+  background: #e2b84b;
+}
+
+.operator .muted {
+  color: #8f9aa5;
+}
+
+.operator .banner {
+  padding: 10px 14px;
+  background: #372b11;
+  color: #f5d78e;
+  border-bottom: 1px solid #5a451a;
+  font-size: 14px;
+}
+
+.operator .diagnostics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #26313b;
+  color: #9ca7b2;
+  font-size: 12px;
+}
+
+.operator .diagnostics span {
+  border: 1px solid #2c3742;
+  border-radius: 999px;
+  padding: 4px 7px;
+  background: #141c23;
+}
+
+.operator .turns {
+  flex: 1 1 auto;
+  min-height: 210px;
+  overflow: auto;
+  padding: 12px;
+}
+
+.operator .turn {
+  width: 100%;
+  display: grid;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 10px;
+  text-align: left;
+  color: inherit;
+  background: #151d24;
+  border: 1px solid #2b3742;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.operator .turn.selected {
+  border-color: #78a8d9;
+}
+
+.operator .turn strong,
+.operator .excerpt {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operator .turn-meta {
+  color: #8f9aa5;
+  font-size: 12px;
+}
+
+.operator .signals,
+.operator .signal-strip {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.operator .signal {
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-size: 12px;
+  background: #28313b;
+  color: #dce8f4;
+}
+
+.operator .receipt-badge {
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-size: 12px;
+  background: #473f2a;
+  color: #f4d68c;
+}
+
+.operator .signal.ai_system {
+  background: #2d3f5e;
+}
+
+.operator .signal.user {
+  background: #3a314f;
+}
+
+.operator .signal.environment {
+  background: #29453b;
+}
+
+.operator .inspector {
+  flex: 0 1 42vh;
+  min-height: 310px;
+  overflow: auto;
+  padding: 14px;
+  border-top: 1px solid #26313b;
+}
+
+.operator .inspector h2,
+.operator .window h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+.operator .window {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #2b3742;
+  border-radius: 8px;
+  background: #111920;
+}
+
+.operator .window p {
+  margin: 6px 0;
+  line-height: 1.4;
+}
+
+.operator .receipts {
+  display: grid;
+  gap: 8px;
+}
+
+.operator .receipt {
+  display: grid;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid #314151;
+  border-radius: 8px;
+  background: #151f27;
+}
+
+.operator .receipt-heading,
+.operator .receipt-meta,
+.operator .execution {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.operator .receipt-heading strong {
+  overflow-wrap: anywhere;
+}
+
+.operator .receipt-heading span,
+.operator .receipt-meta span,
+.operator .execution span,
+.operator .execution em {
+  color: #9ca7b2;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.operator .execution-list {
+  display: grid;
+  gap: 5px;
+}
+
+.operator .execution {
+  padding: 6px 7px;
+  border-left: 3px solid #4c9f70;
+  background: #101820;
+}
+
+.operator .execution.superseded {
+  border-left-color: #c89a3f;
+}
+
+.operator .execution strong {
+  overflow-wrap: anywhere;
+}
+
+.operator details {
+  color: #c5d0da;
+  font-size: 12px;
+}
+
+.operator summary {
+  cursor: pointer;
+  color: #f4d68c;
+}
+
+.operator pre {
+  overflow: auto;
+  max-height: 260px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #0b1117;
+  border: 1px solid #2b3742;
+  color: #d8e1ea;
+  font-size: 12px;
+}
+
+.operator .provenance {
+  color: #8f9aa5;
+  font-size: 12px;
+}
+
+.operator .diagnostic-list {
+  border-top: 1px solid #26313b;
+  padding: 10px 14px;
+}
+
+.operator .diagnostic-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  color: #b8c3cc;
+  font-size: 12px;
+}
+
+.app-error {
+  padding: 24px;
+}
+
+/* Ladder surface (WP-4). Tier is a state, not a severity gradient: the colour
+   distinguishes tiers, and the caption carries the meaning. */
+.operator .ladder {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.78rem;
+}
+.operator .tier {
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+  font-weight: 600;
+  font-size: 0.72rem;
+  border: 1px solid currentColor;
+}
+.operator .tier-1 { color: #7fb3ff; }
+.operator .tier-2 { color: #ffd479; }
+.operator .tier-3 { color: #ffb066; }
+.operator .tier-4 { color: #ff8080; }
+.operator .banner.terminated {
+  border-left: 3px solid #ff8080;
+}
+.operator .plan-source.rehearsal_fixture {
+  color: #ffd479;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.operator .plan-source.live_verdict { color: #8fd08f; }
+.operator .receipt-cause {
+  font-size: 0.74rem;
+  opacity: 0.85;
+  padding-top: 0.2rem;
+}
+.operator .receipt-cause code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  padding: 0 0.25rem;
+}
+
+/* A failed turn reads as an error, not as a response. */
+.operator .message.failed {
+  border-left: 3px solid #ff8080;
+  opacity: 0.9;
+}
+.operator .message.failed > span {
+  color: #ff8080;
+  text-transform: none;
+}
+.operator .message.failed p {
+  font-style: italic;
+}
+
+
+
+/* Shared cockpit occupies the existing side column; operator tools stay accessible. */
+.cockpit-column {width:430px;min-width:0;height:100vh;display:flex;flex-direction:column;overflow:auto;color:oklch(.25 .012 260);background:oklch(.995 .002 90)}
+.cockpit-column>.sospio-ck {flex:1;min-height:450px}
+.operator {flex-shrink:0;border-top:1px solid oklch(.89 .006 260);padding:8px 14px}
+.operator>summary {cursor:pointer;font:13px 'IBM Plex Sans',sans-serif}
+.operator .panel {width:100%;height:auto;overflow:visible}
+body #root .shell {grid-template-columns:minmax(0,1fr) 430px;height:100vh;overflow:hidden}
+
+.operator .panel {color:#eef4f8;background:#101418;min-height:0}
+.sospio-ck,.sospio-chat {color-scheme:light}
+
+/* The viewport owns no scroll; only its two content regions do. */
+html, body, #root {height:100%;overflow:hidden}
+.cockpit-column {height:100%;min-height:0;overflow:hidden}
+.cockpit-column>.sospio-ck {flex:1;min-height:0}
+.operator {max-height:45%;overflow:auto}
+.operator>summary {color:oklch(.25 .012 260)}
+body #root .shell {height:100dvh;min-height:0;grid-template-rows:minmax(0,1fr)}
+.toast {position:fixed;top:auto;bottom:12px;left:50%;right:auto;transform:translateX(-50%);max-width:70%;pointer-events:none;z-index:100}

@@ -1,0 +1,6 @@
+data: {"conversation_id":"chatgpt-fixture-long","message":{"author":{"role":"assistant"},"content":{"content_type":"text","parts":["Calibration means matching confidence to evidence."]}}}
+
+data: {"conversation_id":"chatgpt-fixture-long","message":{"author":{"role":"assistant"},"content":{"content_type":"text","parts":["Calibration means matching confidence to evidence.\n\nIt matters because overconfident systems can sound useful while hiding uncertainty."]}}}
+
+data: [DONE]
+

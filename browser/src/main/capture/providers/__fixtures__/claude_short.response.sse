@@ -1,0 +1,9 @@
+event: completion
+data: {"type":"completion","completion":"Here is a concise "}
+
+event: completion
+data: {"type":"completion","completion":"one-sentence answer."}
+
+event: message_stop
+data: {}
+
