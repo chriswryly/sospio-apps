@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
@@ -9,7 +9,7 @@ const runtime = vi.hoisted(() => ({
   dataDir: "",
   handlers: new Map<string, (...arguments_: unknown[]) => unknown>(),
   captures: [] as Array<import("node:events").EventEmitter>,
-  windows: [] as Array<{ webContents: { mainFrame: object; loadURL(url: string): Promise<void> } }>,
+  windows: [] as Array<{ webContents: { mainFrame: object; loadURL(url: string): Promise<void>; on: ReturnType<typeof vi.fn> } }>,
   notice: vi.fn(async () => undefined),
   start: vi.fn(async () => ({monitor: "fixture monitor"})),
   encryptionAvailable: false,
@@ -101,6 +101,19 @@ afterEach(() => {
   rmSync(runtime.dataDir, { recursive: true, force: true });
 });
 
+it("records panel console details from the current Electron event without deprecated positional arguments", async () => {
+  vi.stubEnv("RSH_MONITOR_REMOTE_TOKEN", undefined);
+  await import("./index");
+  await vi.waitFor(() => expect(runtime.windows).toHaveLength(1));
+  const listener = runtime.windows[0].webContents.on.mock.calls.find(([event]) => event === "console-message")?.[1];
+  expect(listener).toBeTypeOf("function");
+  listener({level: "warning", message: "Fixture renderer log", lineNumber: 17, sourceId: "file:///fixture/panel.js", frame: {}});
+  const directory = join(runtime.dataDir, "logs");
+  const logs = readdirSync(directory).map(name => readFileSync(join(directory, name), "utf8")).join("\n");
+  expect(logs).toContain("panel console level=warning file:///fixture/panel.js:17 Fixture renderer log");
+  expect(logs).not.toContain("undefined");
+});
+
 it("claims in main, encrypts the token, and starts the configured monitor and browser", async () => {
   vi.stubEnv("RSH_MONITOR_REMOTE_TOKEN", undefined);
   runtime.encryptionAvailable = true;
@@ -135,7 +148,7 @@ it("claims in main, encrypts the token, and starts the configured monitor and br
 it.each([
   [401, "relay_claim_invalid_code", "That invite code didn't work."],
   [429, "relay_claim_lockout", "Too many tries. Wait 15 minutes."],
-  [429, "relay_claim_daily", "A token was already given to this network today. Use that token, or try again tomorrow."],
+  [429, "relay_claim_daily", "This network has reached today's limit for new tokens. Try again tomorrow."],
   [429, "relay_claim_hourly", "Lots of people are getting tokens right now. Try again in an hour."],
   [410, "relay_claims_exhausted", "All trial tokens have been handed out. Contact the person who shared Sospio with you."],
 ])("returns the plain claim error for %s %s without configuring a monitor", async (status, error, message) => {

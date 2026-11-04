@@ -45,7 +45,7 @@ it("does not issue a claim when secure token storage is unavailable", async () =
 it.each([
   [401, "relay_claim_invalid_code", "That invite code didn't work."],
   [429, "relay_claim_lockout", "Too many tries. Wait 15 minutes."],
-  [429, "relay_claim_daily", "A token was already given to this network today. Use that token, or try again tomorrow."],
+  [429, "relay_claim_daily", "This network has reached today's limit for new tokens. Try again tomorrow."],
   [429, "relay_claim_hourly", "Lots of people are getting tokens right now. Try again in an hour."],
   [429, "relay_claim_rate", "Too many token requests. Try again later."],
   [410, "relay_claims_exhausted", "All trial tokens have been handed out. Contact the person who shared Sospio with you."],

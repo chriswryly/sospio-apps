@@ -67,3 +67,28 @@ test("release_leak: integrity exemption is limited to lockfile integrity fields"
   assert.ok(scanText(lock, "source.json").length > 0);
   assert.ok(scanText(JSON.stringify({ resolved: "a".repeat(64) }), "package-lock.json").length > 0);
 });
+
+test("release_leak: allows the disclosed backend name only in the top-level README", () => {
+  const name = ["J", "ev"].join("");
+  const line = `As of this writing, ${name} is the principal backend which receives messages.`;
+  assert.deepEqual(scanText(line, "README.md"), []);
+  for (const file of ["local/README.md", "browser/README.md", "source.ts", "shared/types.ts"]) {
+    assert.ok(scanText(line, file).length > 0, file);
+  }
+  assert.ok(scanText(`${name.toLowerCase()}_prompt`, "README.md").length > 0);
+  assert.ok(scanText(`${name} prompts and the ${["l", "una"].join("")} backend`, "README.md").length > 0);
+});
+
+test("release_leak: only official full action pins in the release workflow are exempt", () => {
+  const pin = "a".repeat(40), workflow = ".github/workflows/release.yml";
+  for (const action of ["checkout", "setup-node", "upload-artifact", "download-artifact"]) {
+    const line = `      - uses: actions/${action}@${pin}`;
+    assert.deepEqual(scanText(line, workflow), []);
+    assert.ok(scanText(line, "source.ts").length > 0);
+    assert.ok(scanText(line, ".github/workflows/other.yml").length > 0);
+  }
+  for (const text of [`token: ${pin}`, `# uses: actions/checkout@${pin}`, `- uses: other/checkout@${pin}`,
+    `- uses: actions/checkout@${pin}extra`, `- uses: actions/checkout@${pin} # ${pin}`,
+    `- uses: actions/checkout@${pin}\nsecret: ${pin}`]) assert.ok(scanText(text, workflow).length > 0);
+  assert.ok(scanText(`- uses: actions/checkout@${pin} # ${["l", "una"].join("")}`, workflow).length > 0);
+});

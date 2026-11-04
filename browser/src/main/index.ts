@@ -638,8 +638,8 @@ function installPanelDiagnostics(webContents: WebContents): void {
   webContents.on("render-process-gone", (_event, details) => {
     logMain(`panel render-process-gone reason=${details.reason} exitCode=${details.exitCode}`);
   });
-  webContents.on("console-message", (_event, level, message, line, sourceId) => {
-    logMain(`panel console level=${level} ${sourceId}:${line} ${message}`);
+  webContents.on("console-message", ({level, message, lineNumber, sourceId}) => {
+    logMain(`panel console level=${level} ${sourceId}:${lineNumber} ${message}`);
   });
 }
 

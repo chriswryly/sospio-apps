@@ -12,7 +12,10 @@ import { HostedChatClient } from "./hostedChatClient";
 import { HostedSpend, promptTokenBound, reservationUsd } from "./hostedSpend";
 import { installIpc, pushState, pushToast } from "./ipc";
 import { monitorSetupHandlers } from "./monitorSetup";
+import { migrateChatData } from "./migrateData";
 
+app.setName("Sospio Chat");
+migrateChatData(app.getPath("appData"));
 app.disableHardwareAcceleration();
 let window: BrowserWindow | undefined;
 let runtime: HarnessRuntime | undefined;

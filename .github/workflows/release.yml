@@ -1,0 +1,109 @@
+name: Build macOS installers
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [local, browser]
+        platform:
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.platform.runner }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+      - name: Check version and runner architecture
+        env:
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          BUILD_ARCH: ${{ matrix.platform.arch }}
+        run: |
+          node ../scripts/verify-version.mjs "$RELEASE_TAG"
+          node -e 'if (process.arch !== process.env.BUILD_ARCH) throw new Error("Runner architecture mismatch")'
+      - run: npm ci
+      - name: Install import-check tooling from the other app
+        if: matrix.app == 'browser'
+        run: npm ci --ignore-scripts --prefix ../local
+      - name: Check types and tests
+        run: |
+          npm run typecheck
+          npm test
+          npm run test:leaks
+          node --test ../tests/packaging.test.mjs
+          node --test ../tests/workflow.test.mjs
+      - name: Check release sources and imports
+        run: |
+          node --input-type=module -e 'import {scanRelease} from "../scripts/release-scan.mjs"; const errors = scanRelease(".."); if (errors.length) { console.error(errors.join("\n")); process.exit(1); }'
+          node ../scripts/check-imports.mjs
+      - name: Check signing configuration
+        id: signing
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          node --input-type=module -e 'import {appendFileSync} from "node:fs"; import {signingOptions} from "../scripts/signing.mjs"; appendFileSync(process.env.GITHUB_OUTPUT, "enabled=" + signingOptions(process.env).enabled + "\n");'
+      - name: Build ad-hoc signed installers (no signing secrets)
+        if: steps.signing.outputs.enabled != 'true'
+        run: npm run dist -- --${{ matrix.platform.arch }}
+      - name: Build certificate-signed and notarized installers
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: npm run dist -- --${{ matrix.platform.arch }}
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: ${{ matrix.app }}-${{ matrix.platform.arch }}
+          path: |
+            ${{ matrix.app }}/dist/*.dmg
+            ${{ matrix.app }}/dist/*.zip
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Create checksums
+        working-directory: artifacts
+        run: sha256sum *.dmg *.zip > SHA256SUMS.txt
+      - name: Create draft release for manual review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          gh release create "$RELEASE_TAG" artifacts/*.dmg artifacts/*.zip artifacts/SHA256SUMS.txt \
+            --repo "$RELEASE_REPOSITORY" --verify-tag --draft --title "Sospio $RELEASE_TAG" \
+            --notes "Early macOS test release. Review installer checksums and signing status before publishing. See each app README for first-open instructions."

@@ -29,3 +29,20 @@ Completed user messages and assistant replies, conversation identifiers, provide
 - **Ollama model pull:** this browser app uses the chat websites and needs no local model. Model setup belongs to the local app.
 
 Run `npm run typecheck`, `npm test`, `npm run test:leaks`, and `npm run build` for offline checks. These checks use fixtures and do not call the monitor service or chat providers.
+
+## Download
+
+Download the latest **Sospio Browser** `.dmg` from [Releases](https://github.com/chriswryly/sospio-apps/releases).
+Choose `Sospio-Browser-<version>-arm64.dmg` for Apple silicon (M-series Macs), or
+`Sospio-Browser-<version>-x64.dmg` for Intel. Open the disk image and drag **Sospio Browser** to Applications.
+The installed app requires macOS 13 (Ventura) or later. It does not need Node, git, or Ollama.
+
+This is an early test release, so the app is unsigned and not notarized. Open it once, then, if macOS blocks it,
+go to **System Settings › Privacy & Security › Open Anyway**. If macOS says the app is damaged, run this one-time
+command in Terminal, then open the app again:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Sospio Browser.app"
+```
+
+Enter an invite code to get a monitor token, or paste a token you already have, then sign in to your own chat-site account.

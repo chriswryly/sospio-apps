@@ -1,0 +1,26 @@
+appId: net.axrlab.sospio.chat
+productName: Sospio Chat
+artifactName: Sospio-Chat-${version}-${arch}.${ext}
+directories:
+  output: dist
+  buildResources: build
+asar: true
+npmRebuild: false
+files:
+  - out/**/*
+  - package.json
+  - from: ..
+    to: .
+    filter: [LICENSE]
+  - '!**/*.map'
+  - '!**/*.{test,spec}.*'
+  - '!**/{test,tests,__tests__,fixtures,__fixtures__,scripts}/**/*'
+  - '!**/.env*'
+mac:
+  target: [dmg, zip]
+  icon: build/icon.icns
+  category: public.app-category.productivity
+  identity: '-'
+  hardenedRuntime: false
+  notarize: false
+publish: null

@@ -21,7 +21,7 @@ export async function claimMonitorToken(value: MonitorClaimRequest, settings: Pi
     }
     const message = response.status === 401 && result.error === "relay_claim_invalid_code" ? "That invite code didn't work." :
       response.status === 429 && result.error === "relay_claim_lockout" ? "Too many tries. Wait 15 minutes." :
-      response.status === 429 && result.error === "relay_claim_daily" ? "A token was already given to this network today. Use that token, or try again tomorrow." :
+      response.status === 429 && result.error === "relay_claim_daily" ? "This network has reached today's limit for new tokens. Try again tomorrow." :
       response.status === 429 && result.error === "relay_claim_hourly" ? "Lots of people are getting tokens right now. Try again in an hour." :
       response.status === 429 && result.error === "relay_claim_rate" ? "Too many token requests. Try again later." :
       response.status === 404 && result.error === "not_found" ? "This monitor server isn't giving out tokens. Ask the person who shared Sospio with you for one." :

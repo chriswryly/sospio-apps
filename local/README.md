@@ -42,3 +42,30 @@ For a different local Ollama address, set `RSH_LOCAL_OLLAMA_URL`. Use **Restart*
 - **Secure storage is unavailable:** unlock your macOS login keychain and reopen the app. The app does not save the token as plain text.
 
 For offline checks, run `npm run typecheck`, `npm test`, `npm run test:leaks`, and `npm run build`.
+
+## Download
+
+Download the latest **Sospio Chat** `.dmg` from [Releases](https://github.com/chriswryly/sospio-apps/releases).
+Choose `Sospio-Chat-<version>-arm64.dmg` for Apple silicon (M-series Macs), or
+`Sospio-Chat-<version>-x64.dmg` for Intel. Open the disk image and drag **Sospio Chat** to Applications.
+The installed app requires macOS 13 (Ventura) or later, but does not need Node or git. Ollama must be installed
+and running, with the assistant model shown in the app already downloaded.
+
+This is an early test release, so the app is unsigned and not notarized. Open it once, then, if macOS blocks it,
+go to **System Settings › Privacy & Security › Open Anyway**. If macOS says the app is damaged, run this one-time
+command in Terminal, then open the app again:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Sospio Chat.app"
+```
+
+Enter an invite code to get a monitor token, or paste a token you already have. The installed app's optional
+hosted assistant currently works only when started from Terminal with the environment variables described above:
+
+```sh
+"/Applications/Sospio Chat.app/Contents/MacOS/Sospio Chat"
+```
+
+If you used the earlier dev build, the app copies its records into the new **Sospio Chat** data folder once,
+without moving or overwriting your old folder. macOS encryption is tied to the app name, so you may need to
+enter your monitor token again after this rename. The migration does not access or change Keychain credentials.

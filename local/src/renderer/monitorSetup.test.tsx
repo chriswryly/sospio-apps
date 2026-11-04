@@ -41,7 +41,7 @@ it("sends the invite code only through the app bridge and clears it on success",
 it.each([
   "That invite code didn't work.",
   "Too many tries. Wait 15 minutes.",
-  "A token was already given to this network today. Use that token, or try again tomorrow.",
+  "This network has reached today's limit for new tokens. Try again tomorrow.",
   "Lots of people are getting tokens right now. Try again in an hour.",
   "All trial tokens have been handed out. Contact the person who shared Sospio with you.",
 ])("shows the main process claim message: %s", async message => {

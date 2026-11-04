@@ -6,6 +6,9 @@ const prohibited = /[j]ev|[l]una|[t]ypesafe|[q]wen|[s]idecar|judge[_]ladder|hybr
 const internalRecord = /(?!README[.]md\b)[A-Z0-9_]{6,}[.]md\b/;
 const credentials = /s[k]-|Bear[e]r |[a-f0-9]{32,}/i;
 const publicIdentifiers = /\b[j]udge[_]ladder(?:_verdict_v1)?\b/g;
+// Chris chose (2026-11-03) to name the principal backend in the top-level README's data disclosure. Only that
+// file, and only the capitalised name as a whole word, is allowed; code, tests and app READMEs stay strict.
+const disclosedBackend = /\b[J]ev\b/g;
 
 export function sourceFiles(root) {
   const files = [];
@@ -37,10 +40,14 @@ export function scanText(body, fileName = "source.ts") {
     stripIntegrity(lock);
     text = JSON.stringify(lock);
   }
-  const names = text.replace(publicIdentifiers, "public_wire_identifier");
+  let names = text.replace(publicIdentifiers, "public_wire_identifier");
+  if (fileName === "README.md") names = names.replace(disclosedBackend, "disclosed_backend");
+  const credentialText = fileName === ".github/workflows/release.yml" ? text.replace(
+    /^(\s*-\s+uses:\s+actions\/(?:checkout|setup-node|upload-artifact|download-artifact)@)[a-f0-9]{40}(?=\s*(?:#.*)?$)/gm,
+    "$1public_action_pin") : text;
   return [prohibited.test(names) ? "private monitor term" : undefined,
     internalRecord.test(names) ? "internal record name" : undefined,
-    credentials.test(text) ? "credential-shaped value" : undefined].filter(Boolean);
+    credentials.test(credentialText) ? "credential-shaped value" : undefined].filter(Boolean);
 }
 
 export function scanRelease(root) {
