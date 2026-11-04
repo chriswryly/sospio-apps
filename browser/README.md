@@ -1,6 +1,8 @@
 # Sospio Browser
 
-This app opens ChatGPT or Claude in a separate browser window and shows the Sospio monitor beside it. Use your own account on those websites.
+This app opens ChatGPT in a separate browser window and shows the Sospio monitor beside it. Use your own account on that website.
+
+Claude is listed in the app but does not work yet: the monitor does not see Claude conversations in this release, so it shows no turns. Use ChatGPT.
 
 Conversation actions run by default, so monitor readings can lead to notices or other actions. For testing, set `RSH_BROWSER_GOVERNOR_LOOP=0` to keep monitoring while turning those actions off.
 
@@ -25,7 +27,7 @@ Completed user messages and assistant replies, conversation identifiers, provide
 
 - **401 or unauthorized:** check the token. After five failed sign-ins, the monitor server can block sign-ins from your network address for 15 minutes. Wait 15 minutes before trying again. Restarting the app does not clear the block; the server operator can clear it by restarting the relay.
 - **Monitor unavailable:** check the connection and monitor URL, then choose **Restart Monitor**. A failed connection does not produce a clear reading.
-- **A chat site will not open:** sign in to your own ChatGPT or Claude account in the app's chat window and reload it.
+- **A chat site will not open:** sign in to your own ChatGPT account in the app's chat window and reload it.
 - **Ollama model pull:** this browser app uses the chat websites and needs no local model. Model setup belongs to the local app.
 
 Run `npm run typecheck`, `npm test`, `npm run test:leaks`, and `npm run build` for offline checks. These checks use fixtures and do not call the monitor service or chat providers.
