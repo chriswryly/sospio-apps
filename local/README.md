@@ -63,6 +63,12 @@ open the app again:
 xattr -dr com.apple.quarantine "/Applications/Sospio Chat.app"
 ```
 
+macOS then asks whether **Sospio Chat** may use the key "Sospio Chat Safe Storage" in your Keychain. The app uses that key
+to encrypt your saved monitor token. Enter your Mac login password and choose **Always Allow**. **Allow** works too,
+but macOS will ask again the next time the app opens. **Deny** means the app can't read or save your token, so it
+shows the token screen each time. Because this release is unsigned, macOS may ask again after you install a new
+version.
+
 Enter an invite code to get a monitor token, or paste a token you already have. The installed app's optional
 hosted assistant currently works only when started from Terminal with the environment variables described above:
 

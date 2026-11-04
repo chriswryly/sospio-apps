@@ -6,7 +6,7 @@ Choose the [chat app](local/README.md) to chat with an assistant running through
 
 ## Getting started
 
-**Easiest:** download the installer for your Mac from [Releases](https://github.com/chriswryly/sospio-apps/releases/latest): `Sospio-Chat-…-arm64.dmg` or `Sospio-Browser-…-arm64.dmg` for Apple silicon, `…-x64.dmg` for Intel. Each app's README explains the one-time macOS "Open Anyway" step. They need macOS 13 or later but no Node or git; the chat app still needs Ollama.
+**Easiest:** download the installer for your Mac from [Releases](https://github.com/chriswryly/sospio-apps/releases/latest): `Sospio-Chat-…-arm64.dmg` or `Sospio-Browser-…-arm64.dmg` for Apple silicon, `…-x64.dmg` for Intel. Each app's README explains the one-time macOS "Open Anyway" step and the Keychain prompt (choose **Always Allow**). They need macOS 13 or later but no Node or git; the chat app still needs Ollama.
 
 **From source:** you need macOS, Node 20, and a Sospio monitor token (which you can acquire from within the initial app execution if needed). Open either app's folder, run `npm install`, then `npm run dev`. Enter your token on the first screen. The default monitor address is `https://monitor.sosp.io`.
 

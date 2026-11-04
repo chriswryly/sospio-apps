@@ -49,4 +49,10 @@ open the app again:
 xattr -dr com.apple.quarantine "/Applications/Sospio Browser.app"
 ```
 
+macOS then asks whether **Sospio Browser** may use the key "Sospio Browser Safe Storage" in your Keychain. The app uses that key
+to encrypt your saved monitor token. Enter your Mac login password and choose **Always Allow**. **Allow** works too,
+but macOS will ask again the next time the app opens. **Deny** means the app can't read or save your token, so it
+shows the token screen each time. Because this release is unsigned, macOS may ask again after you install a new
+version.
+
 Enter an invite code to get a monitor token, or paste a token you already have, then sign in to your own chat-site account.
