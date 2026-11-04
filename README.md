@@ -1,8 +1,8 @@
 # Sospio apps
 
-Sospio is a resilience harness. (See: [AxR Lab](https://axrlab.net/).) It monitors conversations with an AI assistant for signals of potential problems as they develop, and can inject notices to the user and to the AI assistant with the goal of addressing those signals. This repository includes client-side apps that can be run on the user's device, and connect to the Sospio monitor service.
+Sospio is a resilience harness. (See: [AxR Lab](https://axrlab.net/) and [Sospio Report](https://axrlab.net/sospio-report.pdf) (PDF). It monitors conversations with an AI assistant for signals of potential problems as they develop, and can inject notices to the user and to the AI assistant with the goal of addressing those signals. This repository includes client-side apps that can be run on the user's device, which connect to the Sospio monitor service.
 
-Choose the [chat app](local/README.md) to chat with an assistant running through Ollama on your Mac, or optionally an assistant hosted through your own OpenRouter account. Choose the [browser app](browser/README.md) to use supported chat websites inside Sospio. For either pathway, you need a monitor access token, which you can request the first time you open the app, with an invite code. To get an invite code if you do not have one, you may request via email from: sospio-code at axrlab dot net.
+Choose the [chat app](local/README.md) to chat with an assistant running through Ollama on your Mac, or optionally an assistant hosted through your own OpenRouter account. Choose the [browser app](browser/README.md) to use supported chat websites inside Sospio. For either pathway, you need a monitor access token, which you can request the first time you open the app, with an invite code. To get an invite code if you do not have one, you may request via email from: sospio-code at axrlab dot net. Please also contact this address if you have any trouble or need assistance.
 
 ## Getting started
 
