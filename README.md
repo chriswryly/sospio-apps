@@ -6,7 +6,9 @@ Choose the [chat app](local/README.md) to chat with an assistant running through
 
 ## Getting started
 
-You need macOS, Node 20, and a Sospio monitor token (which you can acquire from within the initial app execution if needed). Open either app's folder, run `npm install`, then `npm run dev`. Enter your token on the first screen. The default monitor address is `https://monitor.sosp.io`.
+**Easiest:** download the installer for your Mac from [Releases](https://github.com/chriswryly/sospio-apps/releases/latest): `Sospio-Chat-…-arm64.dmg` or `Sospio-Browser-…-arm64.dmg` for Apple silicon, `…-x64.dmg` for Intel. Each app's README explains the one-time macOS "Open Anyway" step. They need macOS 13 or later but no Node or git; the chat app still needs Ollama.
+
+**From source:** you need macOS, Node 20, and a Sospio monitor token (which you can acquire from within the initial app execution if needed). Open either app's folder, run `npm install`, then `npm run dev`. Enter your token on the first screen. The default monitor address is `https://monitor.sosp.io`.
 
 The two apps have separate settings and records. Tokens entered in an app are encrypted with Electron's operating-system storage and saved in that app's data folder. Use **Clear monitor token** to remove a saved token. If your Mac cannot provide encrypted storage, the app refuses to save it.
 
