@@ -37,9 +37,13 @@ Choose `Sospio-Browser-<version>-arm64.dmg` for Apple silicon (M-series Macs), o
 `Sospio-Browser-<version>-x64.dmg` for Intel. Open the disk image and drag **Sospio Browser** to Applications.
 The installed app requires macOS 13 (Ventura) or later. It does not need Node, git, or Ollama.
 
-This is an early test release, so the app is unsigned and not notarized. Open it once, then, if macOS blocks it,
-go to **System Settings › Privacy & Security › Open Anyway**. If macOS says the app is damaged, run this one-time
-command in Terminal, then open the app again:
+This is an early test release, so the app is unsigned and not notarized. The first time you open it, macOS
+says it can't verify the app. Click **Done**, not Move to Trash. Then go to **System Settings › Privacy & Security**,
+scroll to **Security**, and click **Open Anyway** next to the line about Sospio Browser. The button appears only for about
+an hour after a blocked launch. Enter your Mac password, open the app again and choose **Open**.
+
+If there's no Open Anyway button, or macOS says the app is damaged, run this one-time command in Terminal, then
+open the app again:
 
 ```sh
 xattr -dr com.apple.quarantine "/Applications/Sospio Browser.app"
