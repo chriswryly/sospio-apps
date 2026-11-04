@@ -6,7 +6,7 @@ Choose the [chat app](local/README.md) to chat with an assistant running through
 
 ## Getting started
 
-You need macOS, Node 20, and a Sospio monitor token. Open either app's folder, run `npm install`, then `npm run dev`. Enter your token on the first screen. The default monitor address is `https://monitor.sosp.io`.
+You need macOS, Node 20, and a Sospio monitor token (which you can acquire from within the initial app execution if needed). Open either app's folder, run `npm install`, then `npm run dev`. Enter your token on the first screen. The default monitor address is `https://monitor.sosp.io`.
 
 The two apps have separate settings and records. Tokens entered in an app are encrypted with Electron's operating-system storage and saved in that app's data folder. Use **Clear monitor token** to remove a saved token. If your Mac cannot provide encrypted storage, the app refuses to save it.
 
