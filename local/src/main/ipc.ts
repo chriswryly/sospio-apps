@@ -1,6 +1,7 @@
 import { open } from "node:fs/promises";
 import { ipcMain, type IpcMainInvokeEvent, type WebContents } from "electron";
 import type { HarnessState } from "../shared/types";
+import type { MonitorClaimRequest, MonitorClaimResult } from "../../../shared/types";
 
 export type IpcHandlers = {
   exportPath(fileName: string): Promise<string | undefined>;
@@ -8,6 +9,7 @@ export type IpcHandlers = {
   deleteRecords(): Promise<string>;
   monitorSettings(): {url: string; configured: boolean};
   saveMonitorSettings(value: {url: string; token: string}): Promise<void>;
+  claimMonitorToken(value: MonitorClaimRequest): Promise<MonitorClaimResult>;
   clearMonitorSettings(): Promise<void>;
   setConversationModel(name: string): Promise<void>;
   dismissJudgeNotice(turnId: string, signal: string): Promise<void>;
@@ -36,6 +38,11 @@ export function installIpc(handlers: IpcHandlers): void {
     return handlers.saveMonitorSettings(value as {url: string; token: string});
   });
   ipcMain.handle("harness:clear-monitor-settings", event => {trusted(event); return handlers.clearMonitorSettings();});
+  ipcMain.handle("harness:claim-monitor-token", (event, value: unknown) => {
+    trusted(event);
+    if (!value || typeof value !== "object" || typeof (value as {url?: unknown}).url !== "string" || typeof (value as {code?: unknown}).code !== "string") throw new Error("invalid_monitor_claim");
+    return handlers.claimMonitorToken(value as MonitorClaimRequest);
+  });
   ipcMain.handle("harness:records-info", event => {trusted(event); return handlers.recordsInfo();});
   ipcMain.handle("harness:delete-records", event => {trusted(event); return handlers.deleteRecords();});
   ipcMain.handle("harness:set-conversation-model", (event, name: unknown) => {trusted(event); if (typeof name !== "string" || handlers.getState().messages.length) throw new Error("Invalid model selection"); return handlers.setConversationModel(name);});

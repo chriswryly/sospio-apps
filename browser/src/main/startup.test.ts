@@ -1,4 +1,4 @@
-import { mkdtempSync, realpathSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
@@ -9,8 +9,11 @@ const runtime = vi.hoisted(() => ({
   dataDir: "",
   handlers: new Map<string, (...arguments_: unknown[]) => unknown>(),
   captures: [] as Array<import("node:events").EventEmitter>,
-  windows: [] as Array<{ webContents: { loadURL(url: string): Promise<void> } }>,
+  windows: [] as Array<{ webContents: { mainFrame: object; loadURL(url: string): Promise<void> } }>,
   notice: vi.fn(async () => undefined),
+  start: vi.fn(async () => ({monitor: "fixture monitor"})),
+  encryptionAvailable: false,
+  encrypt: vi.fn((value: string) => Buffer.from(`encrypted:${value}`)),
   verdict: undefined as MonitorVerdict | undefined,
 }));
 
@@ -24,6 +27,7 @@ vi.mock("electron", () => ({
   },
   BrowserWindow: class {
     webContents = {
+      mainFrame: {},
       session: {},
       on: vi.fn(),
       getType: () => "window",
@@ -41,7 +45,11 @@ vi.mock("electron", () => ({
     focus = vi.fn();
   },
   dialog: {},
-  safeStorage: { isEncryptionAvailable: () => false },
+  safeStorage: {
+    isEncryptionAvailable: () => runtime.encryptionAvailable,
+    encryptString: runtime.encrypt,
+    decryptString: (value: Buffer) => value.toString().replace(/^encrypted:/, ""),
+  },
   ipcMain: {
     handle: (channel: string, handler: (...arguments_: unknown[]) => unknown) => runtime.handlers.set(channel, handler),
   },
@@ -65,7 +73,7 @@ vi.mock("./interventionExecutor", async (importOriginal) => ({
 }));
 vi.mock("./remoteMonitor", () => ({
   createMonitorSource: () => ({
-    start: async () => ({ monitor: "fixture monitor" }),
+    start: runtime.start,
     stop: async () => undefined,
     getClient: () => ({
       postTurn: async () => undefined,
@@ -80,6 +88,7 @@ beforeEach(() => {
   runtime.handlers.clear();
   runtime.captures = [];
   runtime.windows = [];
+  runtime.encryptionAvailable = false;
   runtime.dataDir = mkdtempSync(join(realpathSync(tmpdir()), "browser-startup-"));
   vi.stubEnv("RSH_MONITOR_REMOTE_TOKEN", "fixture-monitor-token");
   vi.stubEnv("RSH_BROWSER_GOVERNOR_MECHANISMS", undefined);
@@ -88,7 +97,59 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
   rmSync(runtime.dataDir, { recursive: true, force: true });
+});
+
+it("claims in main, encrypts the token, and starts the configured monitor and browser", async () => {
+  vi.stubEnv("RSH_MONITOR_REMOTE_TOKEN", undefined);
+  runtime.encryptionAvailable = true;
+  const token = "fixture-claimed-token";
+  const fetchClaim = vi.fn(async () => new Response(JSON.stringify({token}), {status: 200}));
+  vi.stubGlobal("fetch", fetchClaim);
+  await import("./index");
+  await vi.waitFor(() => expect(runtime.windows).toHaveLength(1));
+  const sender = runtime.windows[0].webContents;
+  const claim = runtime.handlers.get("harness:claim-monitor-token")!;
+  const value = {url: "https://monitor.example", code: "fixture-invite"};
+  await expect(claim({sender, senderFrame: {}}, value)).rejects.toThrow("untrusted settings source");
+  await expect(claim({sender: {}, senderFrame: sender.mainFrame}, value)).rejects.toThrow("untrusted settings source");
+  expect(fetchClaim).not.toHaveBeenCalled();
+  const result = await claim({sender, senderFrame: sender.mainFrame}, value);
+  expect(result).toEqual({ok: true});
+  expect(fetchClaim).toHaveBeenCalledWith("https://monitor.example/monitor/v1/claim", expect.objectContaining({
+    method: "POST", body: JSON.stringify({code: "fixture-invite"}),
+  }));
+  expect(runtime.encrypt).toHaveBeenCalledOnce();
+  expect(runtime.encrypt).toHaveBeenCalledWith(token);
+  expect(readFileSync(join(runtime.dataDir, "monitor-settings.json"), "utf8")).not.toContain(token);
+  expect(runtime.start).toHaveBeenCalledOnce();
+  expect(runtime.windows).toHaveLength(2);
+  const state = runtime.handlers.get("harness:get-state")!() as HarnessState;
+  expect(state.monitorConfigured).toBe(true);
+  expect(state.monitorHealth).toBe("healthy");
+  expect(JSON.stringify(state)).not.toContain(token);
+  expect(JSON.stringify(state)).not.toContain("fixture-invite");
+});
+
+it.each([
+  [401, "relay_claim_invalid_code", "That invite code didn't work."],
+  [429, "relay_claim_lockout", "Too many tries. Wait 15 minutes."],
+  [429, "relay_claim_daily", "A token was already given to this network today. Use that token, or try again tomorrow."],
+  [429, "relay_claim_hourly", "Lots of people are getting tokens right now. Try again in an hour."],
+  [410, "relay_claims_exhausted", "All trial tokens have been handed out. Contact the person who shared Sospio with you."],
+])("returns the plain claim error for %s %s without configuring a monitor", async (status, error, message) => {
+  vi.stubEnv("RSH_MONITOR_REMOTE_TOKEN", undefined);
+  runtime.encryptionAvailable = true;
+  vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({error}), {status: status as number})));
+  await import("./index");
+  await vi.waitFor(() => expect(runtime.windows).toHaveLength(1));
+  const sender = runtime.windows[0].webContents;
+  expect(await runtime.handlers.get("harness:claim-monitor-token")!({sender, senderFrame: sender.mainFrame}, {url: "https://monitor.example", code: "fixture-invite"})).toEqual({ok: false, message});
+  expect(runtime.encrypt).not.toHaveBeenCalled();
+  expect(runtime.start).not.toHaveBeenCalled();
+  expect(existsSync(join(runtime.dataDir, "monitor-settings.json"))).toBe(false);
+  expect((runtime.handlers.get("harness:get-state")!() as HarnessState).monitorConfigured).toBe(false);
 });
 
 it.each([undefined, "1", "false", "0"])("runs the startup governor unless the setting is exactly 0 (%s)", async (setting) => {

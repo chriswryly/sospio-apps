@@ -35,6 +35,7 @@
   border-bottom: 1px solid oklch(0.91 0.005 260);
 }
 .sospio-chat-heading { min-width: 0; }
+.sospio-chat-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .sospio-chat-heading > strong {
   display: block;
   overflow: hidden;
@@ -419,3 +420,6 @@
 }
 .sospio-chat-repeat summary span { display: inline; }
 .sospio-chat-repeat:not([open]) { padding-block: 8px; }
+/* The shared sign-out style loses to `.sospio-chat button` on specificity; restate its colours here. */
+.sospio-chat .sospio-clear-token { border-color: var(--clear-line); background: transparent; color: var(--clear-ink); }
+.sospio-chat .sospio-clear-token:hover { background: var(--clear-tint); }

@@ -306,6 +306,7 @@ export type ProblemReportResult = { report_id: string; reported_at: string; comp
 export type HarnessApi = {
   monitorSettings?(): Promise<{url: string; configured: boolean}>;
   saveMonitorSettings?(value: {url: string; token: string}): Promise<void>;
+  claimMonitorToken?(value: import("../../../shared/types").MonitorClaimRequest): Promise<import("../../../shared/types").MonitorClaimResult>;
   clearMonitorSettings?(): Promise<void>;
   reportProblem?(request: ProblemReportRequest): Promise<ProblemReportResult>;
   saveExport(fileName: string, contents: string): Promise<boolean>;

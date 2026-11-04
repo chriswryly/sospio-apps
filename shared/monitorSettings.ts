@@ -77,6 +77,10 @@ export class MonitorSettings {
     };
   }
 
+  canSaveToken(): boolean {
+    return this.options.safeStorage.isEncryptionAvailable();
+  }
+
   save(settings: { url: string; token: string }): void {
     const url = monitorUrl(settings.url);
     const token = monitorToken(settings.token);

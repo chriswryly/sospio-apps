@@ -1,4 +1,5 @@
 import { buildConversationExport, browserTranscriptText } from "./conversationExport";
+import { CLEAR_TOKEN_CONFIRM, CLEAR_TOKEN_LABEL } from "../../../shared/clearToken";
 import { version } from "../../package.json";
 import { RecordsPanel } from "../../../cockpit/src/RecordsPanel";
 import {Cockpit,type BannerAction} from '@sospio/cockpit';
@@ -89,7 +90,7 @@ export function Panel(): JSX.Element {
     if(action==='dismiss'||action==='carry_on'){const pooled=browserPooledSelection(run,state.dismissedJudgeNotices);if(pooled)await window.harness.dismissJudgeNotice(pooled.turn.turnId,pooled.event.signal);}
   };
   return (
-    <div className="cockpit-column"><button onClick={() => void window.harness.clearMonitorSettings().catch(error => setToast(String(error)))}>Clear monitor token</button><RecordsPanel api={window.harness} onExport={async () => {
+    <div className="cockpit-column"><div className="cockpit-signout"><button className="sospio-clear-token" onClick={() => { if (window.confirm(CLEAR_TOKEN_CONFIRM)) void window.harness.clearMonitorSettings().catch(error => setToast(String(error))); }}>{CLEAR_TOKEN_LABEL}</button></div><RecordsPanel api={window.harness} onExport={async () => {
             const exported_at = new Date().toISOString();
             const data = buildConversationExport(state, {exported_at, surface: "electron", app_version: version});
             return window.harness.saveExport(`sospio-export-browser-${exported_at.replace(/[:.]/g, "-")}.json`, JSON.stringify(data, null, 2));
@@ -115,14 +116,30 @@ export function Panel(): JSX.Element {
 
 export function MonitorSetup({url, error}: {url: string; error?: string | null}): JSX.Element {
   const [token, setToken] = useState("");
+  const [code, setCode] = useState("");
   const [relayUrl, setRelayUrl] = useState(url);
   const [failure, setFailure] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [claiming, setClaiming] = useState(false);
   return <main className="sospio-setup">
     <section className="setup-card" aria-labelledby="setup-title">
       <p className="setup-mark">Sospio</p>
       <h1 id="setup-title">Enter your Sospio monitor token</h1>
       <p className="setup-lead">Sospio watches your conversations for patterns such as over-reliance and sycophancy. Each message and reply you capture here is sent to the Sospio monitor server.</p>
+      <form className="setup-claim" onSubmit={event => {
+        event.preventDefault();
+        setClaiming(true); setFailure(null);
+        void window.harness.claimMonitorToken({url: relayUrl, code}).then(result => {
+          if (result.ok) setCode("");
+          else setFailure(result.message);
+        }).catch(() => setFailure("Could not get a token. Try again later."))
+          .finally(() => setClaiming(false));
+      }}>
+        <label className="setup-field">Invite code
+          <input type="password" autoComplete="off" spellCheck={false} placeholder="Enter the code you were given" value={code} onChange={event => setCode(event.target.value)} required />
+        </label>
+        <button className="setup-submit" type="submit" disabled={saving || claiming || !code.trim()}>{claiming ? "Getting a token…" : "Get a token"}</button>
+      </form>
       <form onSubmit={event => {
         event.preventDefault();
         setSaving(true); setFailure(null);
@@ -138,10 +155,10 @@ export function MonitorSetup({url, error}: {url: string; error?: string | null})
           <summary>Monitor server</summary>
           <label className="setup-field">Server address<input type="url" value={relayUrl} onChange={event => setRelayUrl(event.target.value)} required /></label>
         </details>
-        <button className="setup-submit" type="submit" disabled={saving || !token.trim()}>{saving ? "Connecting…" : "Connect"}</button>
+        <button className="setup-submit" type="submit" disabled={saving || claiming || !token.trim()}>{saving ? "Connecting…" : "Connect"}</button>
         {(failure || error) && <p className="setup-error" role="alert">{failure ?? error}</p>}
       </form>
-      <p className="setup-foot">No token? Ask the person who invited you to try Sospio.</p>
+      <p className="setup-foot">Use an invite code to get a token, or paste a token you already have.</p>
     </section>
   </main>;
 }

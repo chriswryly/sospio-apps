@@ -739,3 +739,5 @@ html, body, #root {height:100%;overflow:hidden}
 .cockpit-column>.sospio-ck {flex:1;min-height:0}
 .operator {max-height:45%;overflow:auto}
 .operator>summary {color:oklch(.25 .012 260)}
+
+.cockpit-signout {display:flex;justify-content:flex-end;padding:10px 16px 0}

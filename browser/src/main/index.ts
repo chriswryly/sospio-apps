@@ -1,5 +1,6 @@
 import { createMonitorSource } from "./remoteMonitor";
 import { MonitorSettings, type MonitorConnection } from "../../../shared/monitorSettings";
+import { claimMonitorToken } from "../../../shared/monitorClaim";
 import { ClosedConversations } from "./closedConversations";
 import { newMainLogPath } from "./mainLog";
 import { RetentionController } from "../../../records/retentionController";
@@ -108,6 +109,14 @@ installIpc({
     return result.canceled ? undefined : result.filePath;
   },
   recordsInfo: () => ({...recordsInfo("computer", process.env, false, true),...(connection ? {judges: ["the Sospio monitor server"]} : {}),hosted:false}),
+  claimMonitorToken: async value => {
+    const result = await claimMonitorToken(value, settings);
+    if (result.ok) {
+      await restartMonitor();
+      if (connection) createChatWindow();
+    }
+    return result;
+  },
   saveMonitorSettings: async (value) => {
     settings.save(value);
     await restartMonitor();

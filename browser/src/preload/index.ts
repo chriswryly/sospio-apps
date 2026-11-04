@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 import type { HarnessApi, HarnessState, ProviderName } from "../shared/types";
 
 const api: HarnessApi = {
+  claimMonitorToken: value => ipcRenderer.invoke("harness:claim-monitor-token", value),
   saveMonitorSettings: value => ipcRenderer.invoke("harness:save-monitor-settings", value),
   clearMonitorSettings: () => ipcRenderer.invoke("harness:clear-monitor-settings"),
   saveExport: (fileName, contents) => ipcRenderer.invoke("harness:save-export", fileName, contents),

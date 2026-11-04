@@ -108,3 +108,17 @@ it("adds a red light in the header without changing the closing countdown or clo
   expect(container.querySelector("footer")?.textContent).toContain(CLOSED_BODY);
   expect(trigger().textContent).toContain(copy.red.label);
 });
+
+it("puts the token sign-out next to New conversation and asks before clearing", async () => {
+  const onClearToken=vi.fn();
+  await act(async () => root.render(<ChatPane state={state()} onShowTurn={vi.fn()} onShowTurns={vi.fn()} models={[]} onSelectModel={vi.fn()} onClearToken={onClearToken}/>));
+  const buttons=[...container.querySelectorAll("header .sospio-chat-actions button")].map(b => b.textContent?.trim());
+  expect(buttons).toEqual(["New conversation","Clear monitor token (can't be undone)"]);
+  const clear=container.querySelector<HTMLButtonElement>(".sospio-clear-token")!;
+  const confirm=vi.spyOn(window,"confirm").mockReturnValueOnce(false).mockReturnValueOnce(true);
+  await act(async () => clear.click());
+  expect(onClearToken).not.toHaveBeenCalled();
+  await act(async () => clear.click());
+  expect(confirm).toHaveBeenCalledTimes(2);
+  expect(onClearToken).toHaveBeenCalledOnce();
+});

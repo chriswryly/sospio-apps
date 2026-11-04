@@ -300,6 +300,7 @@ export type HarnessState = {
 };
 
 export type HarnessApi = {
+  claimMonitorToken(value: {url: string; code: string}): Promise<import("../../../shared/types").MonitorClaimResult>;
   saveMonitorSettings(value: {url: string; token: string}): Promise<void>;
   clearMonitorSettings(): Promise<void>;
   saveExport(fileName: string, contents: string): Promise<boolean>;

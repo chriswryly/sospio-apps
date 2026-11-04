@@ -11,6 +11,7 @@ import { ChatRouter } from "./chatRouter";
 import { HostedChatClient } from "./hostedChatClient";
 import { HostedSpend, promptTokenBound, reservationUsd } from "./hostedSpend";
 import { installIpc, pushState, pushToast } from "./ipc";
+import { monitorSetupHandlers } from "./monitorSetup";
 
 app.disableHardwareAcceleration();
 let window: BrowserWindow | undefined;
@@ -34,7 +35,7 @@ app.whenReady().then(async () => {
     {spend, startMonitor: monitor.start, settings: () => settings.view()});
   installIpc({
     monitorSettings: () => settings.view(),
-    saveMonitorSettings: async value => {settings.save(value); monitor.setConnection(settings.load()!); await runtime!.initialize();},
+    ...monitorSetupHandlers(settings, monitor, () => runtime!.initialize()),
     clearMonitorSettings: async () => {if (runtime!.recordsBusy()) throw new Error("records_busy"); settings.clear(); monitor.clear(); await runtime!.initialize();},
     exportPath: async fileName => {const result = await dialog.showSaveDialog({defaultPath: fileName, filters: [{name: "JSON", extensions: ["json"]}]}); return result.canceled ? undefined : result.filePath;},
     recordsInfo: () => ({...recordsInfo("computer", process.env, false, true), hosted: Boolean(config.hosted)}),

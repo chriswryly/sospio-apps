@@ -22,6 +22,7 @@ import {
 import "./styles.css";
 import "../../../shared/monitorSetup.css";
 import { UtilityNotice } from "./UtilityNotice";
+import type { MonitorClaimRequest, MonitorClaimResult } from "../../../shared/types";
 
 const initialState: HarnessState = {
   sessionId: "",
@@ -75,7 +76,7 @@ export function App(): JSX.Element {
         <p>The Electron preload bridge is unavailable.</p>
       </main>
     );
-  if (!state.monitorSetup?.configured) return <MonitorSetup url={state.monitorSetup?.url ?? "https://monitor.sosp.io"} save={async value => {await harness.saveMonitorSettings!(value); setState(await harness.getState());}} />;
+  if (!state.monitorSetup?.configured) return <MonitorSetup url={state.monitorSetup?.url ?? "https://monitor.sosp.io"} save={async value => {await harness.saveMonitorSettings!(value); setState(await harness.getState());}} claim={async value => {const result = await harness.claimMonitorToken!(value); if (result.ok) setState(await harness.getState()); return result;}} />;
   const view = cockpitViewModel(state, now);
   const onAction = async (action: BannerAction, ordinals?: number[]) => {
     if (ordinals) setSelectedOrdinals(ordinals);
@@ -110,11 +111,11 @@ export function App(): JSX.Element {
             .setConversationModel(name)
             .catch((e) => setToast(String(e)))
         }
+        onClearToken={() => void harness.clearMonitorSettings!().then(() => harness.getState()).then(setState).catch(error => setToast(String(error)))}
         onShowTurns={setSelectedOrdinals}
         onShowTurn={(ordinal) => setSelectedOrdinals([ordinal])}
       />
         <aside className="cockpit-column">
-          <button onClick={() => void harness.clearMonitorSettings!().then(() => harness.getState()).then(setState).catch(error => setToast(String(error)))}>Clear monitor token</button>
           <RecordsPanel api={harness} web={false} exportDisabled={state.isGenerating} onExport={async () => {
             const exported_at = new Date().toISOString();
             const data = buildConversationExport(state, {exported_at, surface: false ? "web" : "electron", app_version: version});
@@ -330,9 +331,10 @@ function DiagnosticList({
   );
 }
 
-export function MonitorSetup({url: initialUrl, save}: {url: string; save(value: {url: string; token: string}): Promise<void>}) {
+export function MonitorSetup({url: initialUrl, save, claim}: {url: string; save(value: {url: string; token: string}): Promise<void>; claim(value: MonitorClaimRequest): Promise<MonitorClaimResult>}) {
   const [url, setUrl] = useState(initialUrl);
   const [token, setToken] = useState("");
+  const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   return <main className="sospio-setup">
@@ -340,6 +342,19 @@ export function MonitorSetup({url: initialUrl, save}: {url: string; save(value: 
       <p className="setup-mark">Sospio</p>
       <h1 id="setup-title">Enter your Sospio monitor token</h1>
       <p className="setup-lead">Sospio watches your conversations for patterns such as over-reliance and sycophancy. Each message and reply in this app is sent to the Sospio monitor server.</p>
+      <form className="setup-claim" onSubmit={event => {
+        event.preventDefault();
+        setSaving(true); setError("");
+        void claim({url, code})
+          .then(result => {if (result.ok) setCode(""); else setError(result.message);})
+          .catch(() => setError("Could not get a token. Try again later."))
+          .finally(() => setSaving(false));
+      }}>
+        <label className="setup-field">Invite code
+          <input type="password" required autoComplete="off" spellCheck={false} placeholder="Enter the code you were given" value={code} onChange={event => setCode(event.target.value)} />
+        </label>
+        <button className="setup-submit" type="submit" disabled={saving || !code.trim()}>{saving ? "Connecting…" : "Get a token"}</button>
+      </form>
       <form onSubmit={event => {
         event.preventDefault();
         setSaving(true); setError("");
@@ -358,7 +373,7 @@ export function MonitorSetup({url: initialUrl, save}: {url: string; save(value: 
         <button className="setup-submit" type="submit" disabled={saving || !token.trim()}>{saving ? "Connecting…" : "Connect"}</button>
         {error && <p className="setup-error" role="alert">{error}</p>}
       </form>
-      <p className="setup-foot">No token? Ask the person who invited you to try Sospio.</p>
+      <p className="setup-foot">No invite code? Ask the person who invited you to try Sospio.</p>
     </section>
   </main>;
 }

@@ -6,6 +6,7 @@ import type {
 } from "../shared/types";
 
 export type IpcHandlers = {
+  claimMonitorToken?(value: {url: string; code: string}): Promise<import("../../../shared/types").MonitorClaimResult>;
   saveMonitorSettings?(value: {url: string; token: string}): Promise<void>;
   clearMonitorSettings?(): Promise<void>;
   exportPath?(fileName: string): Promise<string | undefined>;
@@ -21,6 +22,11 @@ export type IpcHandlers = {
 };
 
 export function installIpc(handlers: IpcHandlers): void {
+  ipcMain.handle("harness:claim-monitor-token", async (event, value: unknown) => {
+    if (!handlers.isTrusted?.(event)) throw new Error("untrusted settings source");
+    if (!value || typeof value !== "object" || typeof (value as {url?: unknown}).url !== "string" || typeof (value as {code?: unknown}).code !== "string") throw new Error("invalid_monitor_claim");
+    return handlers.claimMonitorToken?.(value as {url: string; code: string});
+  });
   ipcMain.handle("harness:save-monitor-settings", async (event, value: unknown) => {
     if (!handlers.isTrusted?.(event)) throw new Error("untrusted settings source");
     if (!value || typeof value !== "object" || typeof (value as {url?: unknown}).url !== "string" || typeof (value as {token?: unknown}).token !== "string") throw new Error("invalid_monitor_settings");

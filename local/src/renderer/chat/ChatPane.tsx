@@ -1,4 +1,5 @@
 import type { ChatModelChoice } from "../../shared/types";
+import { CLEAR_TOKEN_CONFIRM, CLEAR_TOKEN_LABEL } from "../../../../shared/clearToken";
 import { Markdown } from "./Markdown";
 import { HOSTED_COPY } from "../../shared/hostedCopy";
 import { CLOSED_TITLE, CLOSED_BODY } from "../../shared/interventionCopy";
@@ -155,12 +156,14 @@ export function ChatPane({
   onShowTurn,
   models,
   onSelectModel,
+  onClearToken,
 }: {
   state: HarnessState;
   onShowTurns: (ordinals: number[]) => void;
   onShowTurn: (ordinal: number) => void;
   models: ChatModelChoice[];
   onSelectModel: (name: string) => void;
+  onClearToken?: () => void;
 }) {
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");
@@ -219,9 +222,19 @@ export function ChatPane({
             {closed && <small>Closed</small>}
           </div>
         </div>
-        <button className="sospio-chat-new" onClick={() => void window.harness!.newConversation()}>
-          New conversation
-        </button>
+        <div className="sospio-chat-actions">
+          <button className="sospio-chat-new" onClick={() => void window.harness!.newConversation()}>
+            New conversation
+          </button>
+          {onClearToken && (
+            <button
+              className="sospio-clear-token"
+              onClick={() => { if (window.confirm(CLEAR_TOKEN_CONFIRM)) onClearToken(); }}
+            >
+              {CLEAR_TOKEN_LABEL}
+            </button>
+          )}
+        </div>
         <div className="sospio-chat-utilities">
           <details className="sospio-chat-session">
             <summary>Session details</summary>
