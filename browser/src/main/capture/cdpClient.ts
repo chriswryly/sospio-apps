@@ -1,3 +1,5 @@
+import { ClaudeBodyDiagnostics } from "./claudeBodyDiagnostics";
+import { ClaudeDiagnostics } from "./claudeDiagnostics";
 import { conversationChanged, conversationIdFromUrl } from "../conversationSurface";
 import type { WebContents } from "electron";
 import { EventEmitter } from "node:events";
@@ -124,6 +126,10 @@ const REPLACE_PRESENTATION_SELECTOR = '[data-rsh-governor-presentation="replace_
 const WITHHELD_MARKER_SELECTOR = "[data-rsh-governor-withheld='true']";
 
 export class CaptureService extends EventEmitter<CaptureEvents> {
+  private claudeBodies = new ClaudeBodyDiagnostics(d => this.emitDiagnostic(d));
+  private claudeDiagnostics = new ClaudeDiagnostics(d => this.emitDiagnostic(d));
+  private claudeRequestMethods = new Map<string, string>();
+  private targetWindows = new WeakMap<Electron.Debugger, WebContents>();
   private attached = new WeakSet<WebContents>();
   private assembler = new TurnAssembler();
   private turnOrder = new Map<string, { owner: Electron.Debugger; requestId: string }>();
@@ -144,6 +150,7 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
   private requestPrompts = new Map<string, string>();
   private freshUserSendCompletionRequests = new Set<string>();
   private recentDiagnosticKeys = new Map<string, number>();
+  private recentClaudeDomKeys = new Map<string, number>();
   private recentTurnKeys = new Map<string, number>();
   private recentUserSends = new Map<Electron.Debugger, RecentUserSend>();
   private domBridge = new DomObserverBridge();
@@ -163,7 +170,7 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
     });
   }
 
-  disposeRecording(): void { this.domBridge.dispose(); this.removeAllListeners(); }
+  disposeRecording(): void { this.claudeBodies.dispose(); this.claudeDiagnostics.dispose(); this.domBridge.dispose(); this.removeAllListeners(); }
 
   hasPendingRecords(): boolean {
     return this.domBridge.hasPending() || this.activeCompletionRequests.size > 0 || this.turnOrder.size > 0 || this.pendingRequestMediation.size > 0;
@@ -175,6 +182,7 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
     }
     this.attached.add(webContents);
     const dbg = webContents.debugger;
+    this.targetWindows.set(dbg, webContents);
     try {
       if (!dbg.isAttached()) {
         dbg.attach("1.3");
@@ -414,7 +422,10 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
     method: string,
     params: DebuggerParams,
   ): Promise<void> {
+    void this.claudeBodies.handle(dbg, method, params);
     if (method === "Network.requestWillBeSent") {
+      const sent = objectField(params.request);
+      this.claudeDiagnostics.request(dbg, stringField(sent?.url) ?? "", stringField(sent?.method) ?? "GET");
       await this.onRequest(dbg, params);
     } else if (method === "Fetch.requestPaused") {
       await this.onRequestPaused(dbg, params);
@@ -479,8 +490,13 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
     if (!requestId || !url) {
       return;
     }
+    if (providerForUrl(url)?.name === "claudeai") {
+      if (this.claudeRequestMethods.size >= 1000) this.claudeRequestMethods.delete(this.claudeRequestMethods.keys().next().value!);
+      this.claudeRequestMethods.set(requestId, method);
+    }
     const provider = completionProviderFor(url, method);
     if (!provider) {
+      this.claudeDiagnostics.unmatched(url, method);
       const diagnostic = unmatchedChatgptDiagnostic(requestId, url, method);
       if (diagnostic) {
         this.emitDiagnostic(diagnostic);
@@ -593,6 +609,17 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
       }
       const at = typeof payload?.at === "number" ? payload.at : Date.now();
       this.recentUserSends.set(dbg, { provider, at });
+      if (provider === "claudeai") {
+        const window = this.targetWindows.get(dbg);
+        if (window && !window.isDestroyed() && providerForUrl(window.getURL())?.name === "claudeai") {
+          window.send("harness:dom-user-send");
+        }
+        this.claudeDiagnostics.userSend(dbg, () => {
+          const window = this.targetWindows.get(dbg);
+          if (!window || window.isDestroyed()) return false;
+          try { return new URL(window.getURL()).hostname === "claude.ai"; } catch { return false; }
+        });
+      }
     } catch {
       // User-send correlation is a guardrail; malformed metadata should not disrupt capture.
     }
@@ -856,6 +883,19 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
   }
 
   private async onResponseReceived(dbg: Electron.Debugger, params: DebuggerParams): Promise<void> {
+    const responseMethod = this.claudeRequestMethods.get(stringField(params.requestId) ?? "") ?? "UNKNOWN";
+    this.claudeRequestMethods.delete(stringField(params.requestId) ?? "");
+    const responseMeta = objectField(params.response);
+    const responseUrl = stringField(responseMeta?.url);
+    const mime = stringField(responseMeta?.mimeType) ?? "";
+    const streaming = mime === "text/event-stream" || mime === "application/x-ndjson" ||
+      mime.startsWith("application/connect+") || params.type === "EventSource";
+    if (responseUrl && streaming) {
+      this.claudeDiagnostics.request(dbg, responseUrl, responseMethod, true);
+      if (!completionProviderFor(responseUrl, responseMethod)) {
+        this.claudeDiagnostics.unmatched(responseUrl, responseMethod, true);
+      }
+    }
     const requestId = stringField(params.requestId);
     if (!requestId) return;
     const mediation = this.pendingRequestMediation.get(requestId);
@@ -1114,8 +1154,16 @@ export class CaptureService extends EventEmitter<CaptureEvents> {
       return;
     }
     const key = `${turn.provider}:${turn.user_prompt}:${turn.assistant_text}`;
-    if (this.seenRecently(this.recentTurnKeys, key, 15_000)) {
-      return;
+    const claudeDom = turn.provider === "claudeai" && detail === "DOM turn pair captured";
+    if (claudeDom) {
+      // Distinct DOM nodes may contain identical text, but a legacy network copy is redundant.
+      const networkAt = this.recentTurnKeys.get(key);
+      if (networkAt !== undefined && Date.now() - networkAt < 15_000) return;
+      this.seenRecently(this.recentClaudeDomKeys, key, 15_000);
+    } else {
+      const domAt = turn.provider === "claudeai" ? this.recentClaudeDomKeys.get(key) : undefined;
+      if (domAt !== undefined && Date.now() - domAt < 15_000) return;
+      if (this.seenRecently(this.recentTurnKeys, key, 15_000)) return;
     }
     this.emit("turn", turn);
     const provider = mediationProvider(turn.provider);

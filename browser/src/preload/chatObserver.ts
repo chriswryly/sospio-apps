@@ -1,3 +1,4 @@
+import { ClaudeDomCapture, DOM_TEXT_SETTLE_MS } from "./claudeDomCapture";
 import { mountJudgeNotice, type PageJudgeNotice } from "./judgeNotice";
 import { ipcRenderer } from "electron";
 
@@ -13,6 +14,7 @@ type DomObserverConfig = {
   };
 };
 
+let claudeCapture: ClaudeDomCapture | undefined;
 let observer: MutationObserver | undefined;
 let config: DomObserverConfig = { enabled: false };
 let seenUserText = "";
@@ -27,12 +29,23 @@ ipcRenderer.on("harness:dom-observer-config", (_event, nextConfig: DomObserverCo
   }
 });
 
+ipcRenderer.on("harness:dom-user-send", () => claudeCapture?.userSend());
 window.addEventListener("beforeunload", stopObserver);
 
 async function startObserver(): Promise<void> {
   const selectors = config.selectors;
   if (!config.provider || !selectors) {
     emitDiagnostic("DOM observer enabled without provider selectors");
+    return;
+  }
+  if (config.provider === "claudeai") {
+    claudeCapture = new ClaudeDomCapture(selectors, node => {
+      const text = extractText(node, selectors.textSelectors);
+      return isSubstantive(text) ? text : "";
+    }, payload => ipcRenderer.send("harness:dom-event", {
+      ...payload, provider: "claudeai", url: location.origin + location.pathname,
+      occurred_at: new Date().toISOString(),
+    }));
     return;
   }
   const container = await waitForElement(selectors.conversationContainerSelector, 30_000);
@@ -52,6 +65,8 @@ async function startObserver(): Promise<void> {
 }
 
 function stopObserver(): void {
+  claudeCapture?.stop();
+  claudeCapture = undefined;
   if (observer) {
     observer.disconnect();
     observer = undefined;
@@ -97,7 +112,7 @@ function scan(container: Element): void {
         url: location.origin + location.pathname,
         occurred_at: new Date().toISOString(),
       });
-    }, 300);
+    }, DOM_TEXT_SETTLE_MS);
   }
 }
 

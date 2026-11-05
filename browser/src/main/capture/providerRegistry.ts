@@ -29,7 +29,8 @@ export function providerForName(name: ProviderName): ProviderSpec | undefined {
 export function completionProviderFor(url: string, method: string): ProviderSpec | undefined {
   return PROVIDERS.find((provider) =>
     provider.enabled &&
-    provider.primary === "network" &&
+    // Claude keeps its legacy completion parser alongside its primary DOM capture.
+    (provider.primary === "network" || provider.name === "claudeai") &&
     provider.networkParser?.isCompletionRequestUrl(url, method)
   );
 }

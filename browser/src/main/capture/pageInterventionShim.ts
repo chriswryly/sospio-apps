@@ -89,7 +89,14 @@ export const PAGE_INTERVENTION_SHIM = `(() => {
   document.addEventListener("submit", markDomUserSend, true);
   document.addEventListener("click", (event) => {
     const target = event.target;
-    if (target && typeof target.closest === "function" && target.closest("button,[role='button']")) markDomUserSend();
+    if (target && typeof target.closest === "function" && target.closest("button,[role='button']")) {
+      if (providerFor(location.href) === "claudeai") {
+        const button = target.closest("button,[role='button']");
+        const label = button.getAttribute("aria-label") || button.getAttribute("data-testid") || "";
+        if (!/^(send|send message|send-message)( button)?$/i.test(label.trim()) && button.type !== "submit") return;
+      }
+      markDomUserSend();
+    }
   }, true);
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" || event.shiftKey) return;

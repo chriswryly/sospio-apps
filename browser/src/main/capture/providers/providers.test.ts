@@ -193,8 +193,8 @@ describe("provider adapters", () => {
     const response = fixture("claude_short.response.sse");
     const url =
       "https://claude.ai/api/organizations/org-1/chat_conversations/claude-fixture-short/completion";
-    expect(claudeaiSpec.primary).toBe("network");
-    expect(claudeaiSpec.domEnabled).toBe(false);
+    expect(claudeaiSpec.primary).toBe("dom");
+    expect(claudeaiSpec.domEnabled).toBe(true);
     expect(claudeaiSpec.networkParser?.isCompletionRequestUrl(url, "POST")).toBe(true);
     expect(claudeaiSpec.networkParser?.parseRequest(request).user_prompt).toBe("Please answer in one sentence.");
     expect(claudeaiSpec.networkParser?.parseResponse(response).assistant_text).toBe("Here is a concise one-sentence answer.");

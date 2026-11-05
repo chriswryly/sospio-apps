@@ -1,3 +1,4 @@
+import { turnSelectorsFor } from "../providerDomSelectors";
 import { parseSseEvents, type ProviderSpec } from "./types";
 import { isProviderCompletionRequestUrl } from "./completionMatcher";
 import { extractUserPromptFromRequestBody } from "./requestPrompt";
@@ -9,8 +10,13 @@ const COMPLETION_RE =
 
 export const claudeaiSpec: ProviderSpec = {
   name: "claudeai",
-  primary: "network",
-  domEnabled: false,
+  primary: "dom",
+  domEnabled: true,
+  domSelectors: {
+    conversationContainerSelector: "main",
+    userMessageSelectors: turnSelectorsFor("claudeai").user,
+    assistantMessageSelectors: turnSelectorsFor("claudeai").assistant,
+  },
   enabled: true,
   matches(url) {
     try {
