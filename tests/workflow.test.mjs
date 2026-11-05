@@ -46,7 +46,7 @@ test("builder configs package only release outputs, use distinct identities, and
     assert.equal(config.asar, true); assert.ok(config.files.includes("out/**/*"));
     assert.ok(config.files.includes("!**/*.map")); assert.ok(config.files.includes("!**/.env*"));
     const metadata = JSON.parse(readFileSync(join(root, name, "package.json"), "utf8"));
-    assert.equal(metadata.productName, config.productName); assert.equal(metadata.version, "0.1.0");
+    assert.equal(metadata.productName, config.productName); assert.equal(metadata.version, "0.1.1");
     assert.ok(metadata.devDependencies.electron); assert.equal(metadata.dependencies.electron, undefined);
   }
   assert.equal(ids.size, 2);

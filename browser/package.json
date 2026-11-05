@@ -1,11 +1,13 @@
 {
   "name": "sospio-browser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "productName": "Sospio Browser",
   "private": true,
   "license": "Apache-2.0",
   "description": "Sospio browser app for consumer chats.",
-  "engines": {"node": ">=20"},
+  "engines": {
+    "node": ">=20"
+  },
   "main": "out/main/index.js",
   "type": "module",
   "scripts": {
